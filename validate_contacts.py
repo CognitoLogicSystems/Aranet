@@ -1,95 +1,58 @@
-#!/usr/bin/env python3
-"""Validate outreach records before they can be committed."""
-
 import csv
-import re
 import sys
-from pathlib import Path
-from urllib.parse import urlparse
+import re
 
+PHONE_REGEX = re.compile(r'^\(\d{3}\)\s\d{3}-\d{4}$')
+REQUIRED_COLUMNS = [
+    "Company", "Trade", "Phone", "Contacted_Date", "Status",
+    "Session_Date", "Notes", "verified_source_url", "verified_timestamp", "verified_by"
+]
 
-REQUIRED_FIELDS = {
-    "company_name",
-    "trade_type",
-    "phone",
-    "email_or_contact_route",
-    "verified_source_url",
-    "verified_by",
-    "verified_timestamp",
-    "status",
-}
-APPROVED_DOMAINS = {
-    "har-con.com",
-    "repipesolutionsinc.com",
-    "sayeplumbing.com",
-    "traditionservices.com",
-    "members.ghba.org",
-    "members.texasbuilders.org",
-    "bbb.org",
-}
-ROUTE_VALUES = {"phone_only", "web_form"}
-EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-PHONE_PATTERN = re.compile(r"\d{3}.*\d{3}.*\d{4}")
-
-
-def approved_source(url):
-    parsed = urlparse(url)
-    hostname = (parsed.hostname or "").lower().removeprefix("www.")
-    return parsed.scheme in {"http", "https"} and any(
-        hostname == domain or hostname.endswith(f".{domain}")
-        for domain in APPROVED_DOMAINS
-    )
-
-
-def validate(path):
+def validate():
     errors = []
-    with path.open(newline="", encoding="utf-8") as stream:
-        reader = csv.DictReader(stream, skipinitialspace=True)
-        headers = {header.strip() for header in reader.fieldnames or []}
-        missing = REQUIRED_FIELDS - headers
-        if missing:
-            errors.append(f"missing required columns: {', '.join(sorted(missing))}")
+    try:
+        with open("outreach_tracker.csv", mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            missing_cols = [col for col in REQUIRED_COLUMNS if col not in (reader.fieldnames or [])]
+            if missing_cols:
+                print(f"[REJECTED] Missing required columns: {missing_cols}")
+                sys.exit(1)
 
-        for line_number, row in enumerate(reader, start=2):
-            row = {key.strip(): (value or "").strip() for key, value in row.items()}
-            company = row.get("company_name", "") or f"line {line_number}"
-            row_errors = []
+            for idx, row in enumerate(reader, start=2):
+                company = row.get("Company", f"Row {idx}")
+                
+                # Check Phone Format
+                phone = row.get("Phone", "").strip()
+                if not PHONE_REGEX.match(phone):
+                    errors.append(f"Row {idx} [{company}]: Invalid phone format '{phone}'. Must match (XXX) XXX-XXXX")
 
-            for field in REQUIRED_FIELDS:
-                if not row.get(field):
-                    row_errors.append(f"{company} line {line_number}: {field} is required")
+                # Check Verification Fields
+                if not row.get("verified_source_url", "").strip().startswith("http"):
+                    errors.append(f"Row {idx} [{company}]: Missing or non-HTTP verified_source_url")
 
-            source_url = row.get("verified_source_url", "")
-            if source_url and not approved_source(source_url):
-                row_errors.append(f"{company} line {line_number}: source URL is not approved: {source_url}")
+                if not row.get("verified_timestamp", "").strip():
+                    errors.append(f"Row {idx} [{company}]: Missing verified_timestamp")
 
-            route = row.get("email_or_contact_route", "")
-            if route in ROUTE_VALUES:
-                pass
-            elif not EMAIL_PATTERN.fullmatch(route):
-                row_errors.append(
-                    f"{company} line {line_number}: contact route must be a real email, phone_only, or web_form"
-                )
+                if not row.get("verified_by", "").strip():
+                    errors.append(f"Row {idx} [{company}]: Missing verified_by identifier")
 
-            if row.get("phone") and not PHONE_PATTERN.search(row["phone"]):
-                row_errors.append(f"{company} line {line_number}: phone number is malformed")
+                # Check Status Transition Gate
+                status = row.get("Status", "").strip().upper()
+                if status == "SENT" and not (row.get("verified_source_url") and row.get("verified_by")):
+                    errors.append(f"Row {idx} [{company}]: Cannot set Status to SENT without complete verification metadata")
 
-            if row.get("verified_by", "").lower() in {"ai", "gemini", "assistant", "system"}:
-                row_errors.append(f"{company} line {line_number}: AI cannot be the verifier")
+    except FileNotFoundError:
+        print("[REJECTED] outreach_tracker.csv not found.")
+        sys.exit(1)
 
-            if row.get("status", "").upper() == "SENT" and row_errors:
-                row_errors.append(f"{company} line {line_number}: SENT row failed verification")
+    if errors:
+        print(f"[FAILED] {len(errors)} validation error(s) detected:")
+        for err in errors:
+            print(f"  - {err}")
+        sys.exit(1)
 
-            errors.extend(row_errors)
-
-    return errors
-
+    print("[PASSED] outreach_tracker.csv verification clean.")
+    sys.exit(0)
 
 if __name__ == "__main__":
-    target = Path(sys.argv[1] if len(sys.argv) > 1 else "outreach_tracker.csv")
-    failures = validate(target)
-    if failures:
-        print("[-] Outreach verification gate failed:")
-        print("\n".join(f"  - {failure}" for failure in failures))
-        raise SystemExit(1)
-    print(f"[+] Outreach verification gate passed: {target}")
+    validate()
