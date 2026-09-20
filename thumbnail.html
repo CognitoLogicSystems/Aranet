@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AraNet Thumbnail Generator</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      width: 1280px;
+      background: #1e293b;
+      padding: 15px;
+      border: 1px solid #334155;
+      box-sizing: border-box;
+    }
+    .controls label {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      color: #38bdf8;
+    }
+    .controls input {
+      padding: 8px;
+      background: #0f172a;
+      border: 1px solid #64748b;
+      color: #f8fafc;
+      font-family: monospace;
+      margin-top: 4px;
+    }
+    canvas {
+      border: 2px solid #22c55e;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+      width: 1280px;
+      height: 720px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #22c55e;
+      color: #022c22;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <label>Top Badge Text:
+      <input type="text" id="badgeInput" value="ARANET-TERMINAL // v21.0">
+    </label>
+    <label>Header Line 1:
+      <input type="text" id="header1Input" value="THE 3:30 AM LEAK">
+    </label>
+    <label>Header Line 2:
+      <input type="text" id="header2Input" value="MISSED CALLS = $0">
+    </label>
+  </div>
+
+  <canvas id="thumb" width="1280" height="720"></canvas>
+  <button onclick="downloadThumb()">Download Thumbnail (PNG)</button>
+  
+  <script>
+    const canvas = document.getElementById('thumb');
+    const ctx = canvas.getContext('2d');
+
+    const badgeInput = document.getElementById('badgeInput');
+    const header1Input = document.getElementById('header1Input');
+    const header2Input = document.getElementById('header2Input');
+
+    function drawThumbnail() {
+      // Background base
+      const grad = ctx.createLinearGradient(0, 0, 1280, 720);
+      grad.addColorStop(0, '#020617');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 1280, 720);
+
+      // Terminal Grid Lines
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < 1280; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 720); ctx.stroke();
+      }
+      for (let y = 0; y < 720; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke();
+      }
+
+      // Top Badge
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(80, 70, 350, 36);
+      ctx.fillStyle = '#022c22';
+      ctx.font = 'bold 20px monospace';
+      ctx.fillText(badgeInput.value, 95, 95);
+
+      // Main Catch Headers
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '900 82px sans-serif';
+      ctx.fillText(header1Input.value, 80, 200);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '900 78px sans-serif';
+      ctx.fillText(header2Input.value, 80, 290);
+
+      // Accent Box: Jello Audit
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.fillRect(80, 350, 700, 200);
+      ctx.strokeRect(80, 350, 700, 200);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 32px monospace';
+      ctx.fillText('> 72-HOUR JELLO AUDIT', 110, 410);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '24px monospace';
+      ctx.fillText('- Stop guessing ad performance', 110, 460);
+      ctx.fillText('- Count the unreturned leads', 110, 500);
+
+      // Bottom Authority Line
+      ctx.fillStyle = '#22c55e';
+      ctx.font = 'bold 26px monospace';
+      ctx.fillText('COGNITOLOGIC SYSTEMS LLC // ZERO-CLOUD RUNTIME', 80, 630);
+
+      // Subtle CRT Scanlines
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      for (let i = 0; i < 720; i += 4) {
+        ctx.fillRect(0, i, 1280, 2);
+      }
+    }
+
+    badgeInput.addEventListener('input', drawThumbnail);
+    header1Input.addEventListener('input', drawThumbnail);
+    header2Input.addEventListener('input', drawThumbnail);
+
+    drawThumbnail();
+
+    function downloadThumb() {
+      const link = document.createElement('a');
+      link.download = 'jello-audit-episode-1-thumb.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
