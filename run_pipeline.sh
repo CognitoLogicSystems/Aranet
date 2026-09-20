@@ -4,6 +4,7 @@ set -e
 ARCHIVE_NAME="jello_audit_release_bundle.zip"
 STAGING_DIR="release_staging"
 
+python3 validate_contacts.py outreach_tracker.csv
 ./render_batch.sh
 ./convert_mp3.sh
 
