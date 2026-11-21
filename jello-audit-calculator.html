@@ -28,8 +28,8 @@
             --neon-orange: #fb5607;
             --neon-crimson: #ff2a6d;
 
-            --tier-color: #00f5d4;
-            --tier-glow: rgba(0, 245, 212, 0.25);
+            --tier-color: #fb5607;
+            --tier-glow: rgba(251, 86, 7, 0.30);
 
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -174,9 +174,10 @@
         }
 
         .preset-btn.active {
-            background: rgba(0, 245, 212, 0.14);
-            border-color: var(--neon-cyan);
-            color: var(--neon-cyan);
+            background: rgba(251, 86, 7, 0.16);
+            border-color: var(--tier-color);
+            color: #ffffff;
+            box-shadow: 0 0 14px var(--tier-glow);
         }
 
         /* ==========================================================================
@@ -425,26 +426,29 @@
 
         .kpi-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             gap: 0.4rem;
             margin-bottom: 0.55rem;
         }
 
         .kpi-label {
-            font-size: 0.72rem;
+            font-size: 0.71rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             color: var(--text-secondary);
+            line-height: 1.25;
         }
 
         .kpi-badge {
             font-family: var(--font-mono);
-            font-size: 0.65rem;
-            padding: 0.12rem 0.42rem;
+            font-size: 0.63rem;
+            padding: 0.14rem 0.42rem;
             border-radius: 5px;
             font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .kpi-value {
@@ -464,6 +468,16 @@
             align-items: center;
             justify-content: space-between;
             gap: 0.35rem;
+        }
+
+        .kpi-disclaimer {
+            margin-top: 0.42rem;
+            padding-top: 0.38rem;
+            border-top: 1px dashed rgba(170, 255, 0, 0.2);
+            font-size: 0.67rem;
+            line-height: 1.32;
+            color: #bef264;
+            opacity: 0.88;
         }
 
         /* Gauge + Bar Chart Split Row */
@@ -665,9 +679,9 @@
                 <div>
                     <div class="brand-title-row">
                         <h1 class="brand-title">72-Hour Jello Audit</h1>
-                        <span class="system-tag">Jello Mundo v3.2</span>
+                        <span class="system-tag">Jello Mundo v2.1</span>
                     </div>
-                    <p class="brand-sub">Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC &mdash; Revenue Leak &amp; Lead Recovery Telemetry</p>
+                    <p class="brand-sub">Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC &mdash; Custom Revenue Leak &amp; Theoretical Recovery Heuristic</p>
                 </div>
             </div>
 
@@ -675,8 +689,8 @@
             <div class="preset-bar" role="group" aria-label="Audit Preset Scenarios">
                 <span class="preset-label">Presets:</span>
                 <button type="button" class="preset-btn" data-preset="firm" onclick="applyPreset('firm', this)">Firmly Set</button>
-                <button type="button" class="preset-btn active" data-preset="wobble" onclick="applyPreset('wobble', this)">Wobbling</button>
-                <button type="button" class="preset-btn" data-preset="sinking" onclick="applyPreset('sinking', this)">Sinking</button>
+                <button type="button" class="preset-btn" data-preset="wobble" onclick="applyPreset('wobble', this)">Wobbling</button>
+                <button type="button" class="preset-btn active" data-preset="sinking" onclick="applyPreset('sinking', this)">Sinking</button>
                 <button type="button" class="preset-btn" data-preset="gelatina" onclick="applyPreset('gelatina', this)">Gelatina Attack</button>
             </div>
         </div>
@@ -728,9 +742,9 @@
                             <span class="dot-indicator" style="background:#ff2a6d; box-shadow:0 0 8px #ff2a6d;"></span>
                             Monthly Missed Calls
                         </label>
-                        <span id="missedCallsVal" class="value-pill" style="color:#ff2a6d; border-color:rgba(255,42,109,0.35);">18 calls</span>
+                        <span id="missedCallsVal" class="value-pill" style="color:#ff2a6d; border-color:rgba(255,42,109,0.35);">28 calls</span>
                     </div>
-                    <input type="range" id="missedCalls" min="0" max="100" step="1" value="18">
+                    <input type="range" id="missedCalls" min="0" max="100" step="1" value="28">
                     <div class="range-bounds">
                         <span>0 calls</span>
                         <span>50 calls</span>
@@ -774,8 +788,8 @@
             </div>
 
             <div class="telemetry-note">
-                <strong>72-Hour Response Decay Protocol</strong>
-                Leads contacted within 5 minutes convert up to 8x higher. Unanswered inbound calls decay past the 72-hour Jello threshold, turning paid acquisition spend into unrecovered pipeline leakage.
+                <strong>Custom 72-Hour Decay Heuristic</strong>
+                This interactive model uses custom estimation formulas designed by Kitchen Algorithms Labs to simulate how unanswered inbound calls and delayed follow-ups erode paid acquisition ROI over a 72-hour response window.
             </div>
         </aside>
 
@@ -790,10 +804,10 @@
                         <span class="kpi-label">Potential Revenue Leak</span>
                         <span class="kpi-badge" style="background:rgba(255,42,109,0.15); color:#ff2a6d;">MONTHLY</span>
                     </div>
-                    <div id="kpiLeakMonthly" class="kpi-value" style="color:#ff2a6d;">$6,369</div>
+                    <div id="kpiLeakMonthly" class="kpi-value" style="color:#ff2a6d;">$9,707</div>
                     <div class="kpi-sub">
                         <span>Annualized:</span>
-                        <strong id="kpiLeakAnnual" class="tabular" style="color:#fda4af;">$76,431/yr</strong>
+                        <strong id="kpiLeakAnnual" class="tabular" style="color:#fda4af;">$116,484/yr</strong>
                     </div>
                 </article>
 
@@ -803,38 +817,39 @@
                         <span class="kpi-label">Lost Opportunity Est.</span>
                         <span class="kpi-badge" style="background:rgba(255,183,3,0.15); color:#ffb703;">72-HR WINDOW</span>
                     </div>
-                    <div id="kpiLost72Hr" class="kpi-value" style="color:#ffb703;">$637</div>
+                    <div id="kpiLost72Hr" class="kpi-value" style="color:#ffb703;">$3,360</div>
                     <div class="kpi-sub">
                         <span>Lost Deals/Mo:</span>
-                        <strong id="kpiLostDeals" class="tabular" style="color:#fde68a;">4.5 deals</strong>
+                        <strong id="kpiLostDeals" class="tabular" style="color:#fde68a;">7.0 deals</strong>
                     </div>
                 </article>
 
-                <!-- 3. Lead Recovery Estimate -->
+                <!-- 3. Theoretical Recovery Ceiling (Modeled) -->
                 <article class="kpi-card" style="border-color: rgba(170, 255, 0, 0.3);">
                     <div class="kpi-header">
-                        <span class="kpi-label">Lead Recovery Est.</span>
-                        <span class="kpi-badge" style="background:rgba(170,255,0,0.14); color:#aaff00;">AI TRIAGE</span>
+                        <span class="kpi-label">Theoretical Recovery Ceiling (Modeled)</span>
+                        <span class="kpi-badge" style="background:rgba(170,255,0,0.14); color:#aaff00;">MODELED</span>
                     </div>
-                    <div id="kpiRecoveryRev" class="kpi-value" style="color:#aaff00;">$3,935</div>
+                    <div id="kpiRecoveryRev" class="kpi-value" style="color:#aaff00;">$5,997</div>
                     <div class="kpi-sub">
-                        <span>Recovered Leads:</span>
-                        <strong id="kpiRecoveredLeads" class="tabular" style="color:#d9f99d;">12 calls/mo</strong>
+                        <span>Simulated Calls:</span>
+                        <strong id="kpiRecoveredLeads" class="tabular" style="color:#d9f99d;">19 calls/mo</strong>
                     </div>
+                    <div class="kpi-disclaimer">Simulated 68% triage capture model — not included in base $200 Front Door Audit</div>
                 </article>
 
                 <!-- 4. Audit Score -->
                 <article id="kpiScoreCard" class="kpi-card" style="border-color: var(--tier-color);">
                     <div class="kpi-header">
                         <span class="kpi-label">Jello Audit Score</span>
-                        <span id="kpiTierShort" class="kpi-badge" style="background:rgba(255,183,3,0.15); color:#ffb703;">WOBBLING</span>
+                        <span id="kpiTierShort" class="kpi-badge" style="background:rgba(251,86,7,0.16); color:#fb5607;">SINKING</span>
                     </div>
                     <div class="kpi-value" style="color:var(--tier-color);">
-                        <span id="kpiAuditScore">58</span><span style="font-size:0.95rem; color:var(--text-muted); font-weight:600;">/100</span>
+                        <span id="kpiAuditScore">42</span><span style="font-size:0.95rem; color:var(--text-muted); font-weight:600;">/100</span>
                     </div>
                     <div class="kpi-sub">
                         <span>Leak Ratio:</span>
-                        <strong id="kpiLeakRatio" class="tabular" style="color:var(--text-primary);">31.1%</strong>
+                        <strong id="kpiLeakRatio" class="tabular" style="color:var(--text-primary);">40.8%</strong>
                     </div>
                 </article>
             </div>
@@ -847,11 +862,11 @@
                     <div class="panel-header">
                         <div>
                             <h2 class="panel-title">Jello Stability Gauge</h2>
-                            <p class="panel-subtitle">Structural funnel integrity index</p>
+                            <p class="panel-subtitle">Custom funnel integrity heuristic index (v2.1)</p>
                         </div>
                         <div class="stability-pill" id="stabilityBadge">
                             <span class="pulse-dot"></span>
-                            <span id="stabilityTierText">Wobbling</span>
+                            <span id="stabilityTierText">Sinking</span>
                         </div>
                     </div>
 
@@ -868,62 +883,62 @@
                             </defs>
 
                             <!-- Subtle Outer Tier Zone Segments (Radius 142, Center 180,168) -->
-                            <!-- Gelatina Attack (0-29): 180deg to 127.8deg -->
-                            <path d="M 38 168 A 142 142 0 0 1 93.0 55.8" fill="none" stroke="#ff2a6d" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
-                            <!-- Sinking (30-54): 127.8deg to 82.8deg -->
-                            <path d="M 93.0 55.8 A 142 142 0 0 1 197.8 27.1" fill="none" stroke="#fb5607" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
-                            <!-- Wobbling (55-79): 82.8deg to 37.8deg -->
-                            <path d="M 197.8 27.1 A 142 142 0 0 1 292.2 81.0" fill="none" stroke="#ffb703" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Gelatina Attack (0-34): 180deg to 118.8deg -->
+                            <path d="M 38 168 A 142 142 0 0 1 111.6 43.6" fill="none" stroke="#ff2a6d" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Sinking (35-59): 118.8deg to 73.8deg -->
+                            <path d="M 111.6 43.6 A 142 142 0 0 1 219.6 31.6" fill="none" stroke="#fb5607" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Wobbling (60-79): 73.8deg to 37.8deg -->
+                            <path d="M 219.6 31.6 A 142 142 0 0 1 292.2 81.0" fill="none" stroke="#ffb703" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
                             <!-- Firmly Set (80-100): 37.8deg to 0deg -->
                             <path d="M 292.2 81.0 A 142 142 0 0 1 322 168" fill="none" stroke="#00f5d4" stroke-width="4" stroke-opacity="0.55" stroke-dasharray="4 3"/>
 
                             <!-- Base Track Arc (Radius 126, Arc Length = PI * 126 = 395.84) -->
                             <path d="M 54 168 A 126 126 0 0 1 306 168" fill="none" stroke="#162038" stroke-width="22" stroke-linecap="round"/>
 
-                            <!-- Active Score Arc -->
+                            <!-- Active Score Arc (Synced to 42/100 -> offset 229.59) -->
                             <path id="gaugeArc"
                                   class="gauge-arc"
                                   d="M 54 168 A 126 126 0 0 1 306 168"
                                   fill="none"
-                                  stroke="#ffb703"
+                                  stroke="#fb5607"
                                   stroke-width="22"
                                   stroke-linecap="round"
                                   stroke-dasharray="395.84"
-                                  stroke-dashoffset="166.25"
+                                  stroke-dashoffset="229.59"
                                   filter="url(#neonGlow)"/>
 
                             <!-- Precision Tick Marks Container -->
                             <g id="gaugeTicks"></g>
 
-                            <!-- Needle Pointer -->
-                            <g id="gaugeNeedle" class="gauge-needle" style="transform: rotate(14.4deg);">
+                            <!-- Needle Pointer (Synced to 42/100 -> -14.4deg) -->
+                            <g id="gaugeNeedle" class="gauge-needle" style="transform: rotate(-14.4deg);">
                                 <polygon points="180,50 175.5,168 184.5,168" fill="#ffffff" opacity="0.95"/>
                             </g>
                             <circle cx="180" cy="168" r="13" fill="#06080f" stroke="#334155" stroke-width="2.5"/>
-                            <circle id="gaugePivotDot" cx="180" cy="168" r="5" fill="#ffb703"/>
+                            <circle id="gaugePivotDot" cx="180" cy="168" r="5" fill="#fb5607"/>
 
                             <!-- Center Numeric Readout -->
-                            <text id="gaugeScoreLabel" x="180" y="132" text-anchor="middle" fill="#ffffff" font-family="ui-monospace, monospace" font-size="40" font-weight="800">58</text>
+                            <text id="gaugeScoreLabel" x="180" y="132" text-anchor="middle" fill="#ffffff" font-family="ui-monospace, monospace" font-size="40" font-weight="800">42</text>
                             <text x="180" y="150" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="700" letter-spacing="1.8">STABILITY INDEX</text>
                         </svg>
 
-                        <!-- 4-Tier Jello Stability Matrix -->
+                        <!-- 4-Tier Jello Stability Matrix (v2.1 Ranges) -->
                         <div class="tier-legend" id="tierLegend">
                             <div class="tier-chip" data-tier="Firmly Set">
                                 <span class="tier-chip-left"><span class="dot-indicator" style="background:#00f5d4;"></span>Firmly Set</span>
                                 <span class="tabular" style="color:#00f5d4;">80–100</span>
                             </div>
-                            <div class="tier-chip active-tier" data-tier="Wobbling">
+                            <div class="tier-chip" data-tier="Wobbling">
                                 <span class="tier-chip-left"><span class="dot-indicator" style="background:#ffb703;"></span>Wobbling</span>
-                                <span class="tabular" style="color:#ffb703;">55–79</span>
+                                <span class="tabular" style="color:#ffb703;">60–79</span>
                             </div>
-                            <div class="tier-chip" data-tier="Sinking">
+                            <div class="tier-chip active-tier" data-tier="Sinking">
                                 <span class="tier-chip-left"><span class="dot-indicator" style="background:#fb5607;"></span>Sinking</span>
-                                <span class="tabular" style="color:#fb5607;">30–54</span>
+                                <span class="tabular" style="color:#fb5607;">35–59</span>
                             </div>
                             <div class="tier-chip" data-tier="Gelatina Attack">
                                 <span class="tier-chip-left"><span class="dot-indicator" style="background:#ff2a6d;"></span>Gelatina Attack</span>
-                                <span class="tabular" style="color:#ff2a6d;">0–29</span>
+                                <span class="tabular" style="color:#ff2a6d;">0–34</span>
                             </div>
                         </div>
                     </div>
@@ -933,13 +948,50 @@
                 <div class="panel">
                     <div class="panel-header">
                         <div>
-                            <h2 class="panel-title">Monthly Pipeline &amp; Recovery Breakdown</h2>
-                            <p class="panel-subtitle">Captured revenue vs. leakage vs. 72-hour AI recovery</p>
+                            <h2 class="panel-title">Monthly Pipeline &amp; Modeled Recovery Breakdown</h2>
+                            <p class="panel-subtitle">Captured revenue vs. leakage vs. theoretical triage ceiling</p>
                         </div>
                     </div>
 
                     <div class="chart-box">
-                        <svg id="barChartSvg" class="chart-svg" viewBox="0 0 460 255" role="img" aria-label="Monthly Revenue Impact and Recovery Bar Chart"></svg>
+                        <svg id="barChartSvg" class="chart-svg" viewBox="0 0 460 255" role="img" aria-label="Monthly Revenue Impact and Theoretical Recovery Bar Chart">
+                            <!-- Static Pre-Rendered SVG matching Default Inputs ($3,500 / 28 / $1,200 / 25%) -->
+                            <line x1="58" y1="209.0" x2="440" y2="209.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                            <text x="50" y="213.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">$0</text>
+                            <line x1="58" y1="163.3" x2="440" y2="163.3" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                            <text x="50" y="167.3" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">$4.1k</text>
+                            <line x1="58" y1="117.5" x2="440" y2="117.5" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                            <text x="50" y="121.5" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">$8.1k</text>
+                            <line x1="58" y1="71.8" x2="440" y2="71.8" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                            <text x="50" y="75.8" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">$12.2k</text>
+                            <line x1="58" y1="26.0" x2="440" y2="26.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                            <text x="50" y="30.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">$16.2k</text>
+
+                            <!-- Bar 1: Captured Rev ($14,100) -->
+                            <rect x="79.1" y="49.7" width="53.5" height="159.3" rx="6" fill="#00f5d4" fill-opacity="0.22" stroke="#00f5d4" stroke-width="1.6"/>
+                            <rect x="79.1" y="49.7" width="53.5" height="4" rx="2" fill="#00f5d4"/>
+                            <text x="105.8" y="42.7" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">$14.1k</text>
+                            <text x="105.8" y="227.0" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="600">Captured Rev</text>
+
+                            <!-- Bar 2: Monthly Leak ($9,707) -->
+                            <rect x="174.6" y="100.1" width="53.5" height="108.9" rx="6" fill="#ff2a6d" fill-opacity="0.22" stroke="#ff2a6d" stroke-width="1.6"/>
+                            <rect x="174.6" y="100.1" width="53.5" height="4" rx="2" fill="#ff2a6d"/>
+                            <text x="201.3" y="93.1" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">$9.7k</text>
+                            <text x="201.3" y="227.0" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="600">Monthly Leak</text>
+
+                            <!-- Bar 3: Theoretical Recovery Ceiling (Modeled) ($5,997) -->
+                            <rect x="270.1" y="141.7" width="53.5" height="67.3" rx="6" fill="#aaff00" fill-opacity="0.22" stroke="#aaff00" stroke-width="1.6"/>
+                            <rect x="270.1" y="141.7" width="53.5" height="4" rx="2" fill="#aaff00"/>
+                            <text x="296.8" y="134.7" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">$6.0k</text>
+                            <text x="296.8" y="227.0" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="600">Theoretical</text>
+                            <text x="296.8" y="239.0" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="9.5" font-weight="600">Recovery Ceiling</text>
+
+                            <!-- Bar 4: 72-Hr Window ($3,360) -->
+                            <rect x="365.6" y="171.3" width="53.5" height="37.7" rx="6" fill="#ffb703" fill-opacity="0.22" stroke="#ffb703" stroke-width="1.6"/>
+                            <rect x="365.6" y="171.3" width="53.5" height="4" rx="2" fill="#ffb703"/>
+                            <text x="392.3" y="164.3" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">$3.4k</text>
+                            <text x="392.3" y="227.0" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="600">72-Hr Window</text>
+                        </svg>
                     </div>
                 </div>
             </div>
@@ -948,8 +1000,8 @@
             <div class="panel">
                 <div class="panel-header">
                     <div>
-                        <h2 class="panel-title">12-Month Compounding Leak vs. Recovery Trajectory</h2>
-                        <p class="panel-subtitle">Cumulative unmitigated revenue drain compared against automated 72-hour follow-up recovery</p>
+                        <h2 class="panel-title">12-Month Compounding Leak vs. Theoretical Recovery Ceiling Trajectory</h2>
+                        <p class="panel-subtitle">Cumulative unmitigated revenue drain compared against simulated 68% triage capture ceiling</p>
                     </div>
                     <div class="legend-inline">
                         <span class="legend-item">
@@ -958,7 +1010,7 @@
                         </span>
                         <span class="legend-item">
                             <span class="legend-swatch" style="background:#aaff00;"></span>
-                            Cumulative Recovered Revenue
+                            Theoretical Recovery Ceiling (Modeled)
                         </span>
                         <span class="legend-item">
                             <span class="legend-swatch" style="background:#00f5d4;"></span>
@@ -968,15 +1020,83 @@
                 </div>
 
                 <div class="chart-box">
-                    <svg id="trajectoryChartSvg" class="chart-svg" viewBox="0 0 860 250" role="img" aria-label="12-Month Cumulative Revenue Leak vs Recovered Trajectory Chart"></svg>
+                    <svg id="trajectoryChartSvg" class="chart-svg" viewBox="0 0 860 250" role="img" aria-label="12-Month Cumulative Revenue Leak vs Theoretical Recovery Trajectory Chart">
+                        <!-- Static Pre-Rendered SVG matching Default Inputs ($9,707/mo leak, $5,997/mo modeled recovery) -->
+                        <defs>
+                            <linearGradient id="leakAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#ff2a6d" stop-opacity="0.32"/>
+                                <stop offset="100%" stop-color="#ff2a6d" stop-opacity="0.01"/>
+                            </linearGradient>
+                            <linearGradient id="recAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#aaff00" stop-opacity="0.28"/>
+                                <stop offset="100%" stop-color="#aaff00" stop-opacity="0.01"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="66" y1="212.0" x2="832" y2="212.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                        <text x="56" y="216.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">$0</text>
+                        <line x1="66" y1="165.0" x2="832" y2="165.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                        <text x="56" y="169.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">$38.4k</text>
+                        <line x1="66" y1="118.0" x2="832" y2="118.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                        <text x="56" y="122.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">$76.8k</text>
+                        <line x1="66" y1="71.0" x2="832" y2="71.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                        <text x="56" y="75.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">$115.2k</text>
+                        <line x1="66" y1="24.0" x2="832" y2="24.0" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>
+                        <text x="56" y="28.0" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">$153.6k</text>
+
+                        <path d="M 66.0,212.0 L 66.0,200.1 135.6,187.9 205.3,175.3 274.9,162.3 344.5,149.0 414.2,135.2 483.8,121.0 553.5,106.4 623.1,91.3 692.7,75.8 762.4,59.8 832.0,43.4 L 832.0,212.0 Z" fill="url(#leakAreaGrad)"/>
+                        <path d="M 66.0,212.0 L 66.0,204.7 135.6,197.1 205.3,189.3 274.9,181.3 344.5,173.1 414.2,164.6 483.8,155.8 553.5,146.8 623.1,137.4 692.7,127.9 762.4,118.0 832.0,107.8 L 832.0,212.0 Z" fill="url(#recAreaGrad)"/>
+
+                        <polyline points="66.0,200.1 135.6,187.9 205.3,175.3 274.9,162.3 344.5,149.0 414.2,135.2 483.8,121.0 553.5,106.4 623.1,91.3 692.7,75.8 762.4,59.8 832.0,43.4" fill="none" stroke="#ff2a6d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="66.0,204.7 135.6,197.1 205.3,189.3 274.9,181.3 344.5,173.1 414.2,164.6 483.8,155.8 553.5,146.8 623.1,137.4 692.7,127.9 762.4,118.0 832.0,107.8" fill="none" stroke="#aaff00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="66.0,207.5 135.6,202.8 205.3,198.0 274.9,193.0 344.5,187.9 414.2,182.7 483.8,177.2 553.5,171.7 623.1,165.9 692.7,160.0 762.4,153.9 832.0,147.6" fill="none" stroke="#00f5d4" stroke-width="1.8" stroke-dasharray="5 4"/>
+
+                        <text x="66.0" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M1</text>
+                        <circle cx="66.0" cy="200.1" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="66.0" cy="204.7" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="135.6" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M2</text>
+                        <circle cx="135.6" cy="187.9" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="135.6" cy="197.1" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="205.3" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M3</text>
+                        <circle cx="205.3" cy="175.3" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="205.3" cy="189.3" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="274.9" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M4</text>
+                        <circle cx="274.9" cy="162.3" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="274.9" cy="181.3" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="344.5" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M5</text>
+                        <circle cx="344.5" cy="149.0" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="344.5" cy="173.1" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="414.2" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M6</text>
+                        <circle cx="414.2" cy="135.2" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="414.2" cy="164.6" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="483.8" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M7</text>
+                        <circle cx="483.8" cy="121.0" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="483.8" cy="155.8" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="553.5" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M8</text>
+                        <circle cx="553.5" cy="106.4" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="553.5" cy="146.8" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="623.1" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M9</text>
+                        <circle cx="623.1" cy="91.3" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="623.1" cy="137.4" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="692.7" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M10</text>
+                        <circle cx="692.7" cy="75.8" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="692.7" cy="127.9" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="762.4" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M11</text>
+                        <circle cx="762.4" cy="59.8" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="762.4" cy="118.0" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="832.0" y="232.0" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M12</text>
+                        <circle cx="832.0" cy="43.4" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>
+                        <circle cx="832.0" cy="107.8" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>
+                        <text x="826.0" y="34.4" text-anchor="end" fill="#ff2a6d" font-family="ui-monospace, monospace" font-size="11" font-weight="700">$137.2k Leak</text>
+                        <text x="826.0" y="98.8" text-anchor="end" fill="#aaff00" font-family="ui-monospace, monospace" font-size="11" font-weight="700">$84.8k Modeled Ceiling</text>
+                    </svg>
                 </div>
             </div>
 
             <!-- Actionable Diagnostic Protocol Banner -->
             <div class="diagnostic-banner" id="diagnosticBanner">
-                <div class="diagnostic-title" id="diagnosticTitle">DIAGNOSTIC STATUS: WOBBLING (58/100)</div>
+                <div class="diagnostic-title" id="diagnosticTitle">DIAGNOSTIC STATUS: SINKING (42/100)</div>
                 <p class="diagnostic-copy" id="diagnosticCopy">
-                    Moderate structural wobble detected: 18 monthly missed calls generate $6,369/mo in pipeline leakage ($637 lost every 72 hours). Deploying automated SMS/voice triage recovers ~$3,935/mo.
+                    Alert: Paid acquisition spend is sinking into unanswered call queues ($9,707/mo estimated leak; $3,360 lost within the 72-hour immediate decay window). A simulated 68% triage capture model projects a theoretical recovery ceiling of ~$5,997/mo.
                 </p>
             </div>
 
@@ -984,8 +1104,8 @@
     </main>
 
     <footer class="footer">
-        <span>&copy; 2026 Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC. All telemetry deterministic.</span>
-        <span class="tabular">PROTOCOL: 72HR-JELLO-AUDIT // STATUS: ONLINE</span>
+        <span>&copy; 2026 Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC. Custom estimation heuristic &mdash; theoretical recovery ceiling is simulated and not included in the base $200 Front Door Audit.</span>
+        <span class="tabular">MODEL: 72HR-JELLO-HEURISTIC-V2.1 // STATUS: ONLINE</span>
     </footer>
 
     <script>
@@ -1031,6 +1151,15 @@
 
         const GAUGE_RADIUS = 126;
         const GAUGE_ARC_LEN = Math.PI * GAUGE_RADIUS; // ~395.84
+
+        // Recalibrated Presets aligned cleanly with Jello Mundo v2.1 Tier Thresholds:
+        // Firmly Set (80-100), Wobbling (60-79), Sinking (35-59), Gelatina Attack (0-34)
+        const PRESETS = {
+            firm: { adSpend: 2500, missedCalls: 5, customerValue: 800, conversionRate: 18 },       // Evaluates to 80 (Firmly Set)
+            wobble: { adSpend: 3000, missedCalls: 14, customerValue: 1000, conversionRate: 22 },   // Evaluates to 62 (Wobbling)
+            sinking: { adSpend: 3500, missedCalls: 28, customerValue: 1200, conversionRate: 25 },  // Evaluates to 42 (Sinking)
+            gelatina: { adSpend: 6500, missedCalls: 62, customerValue: 2200, conversionRate: 32 }  // Evaluates to 18 (Gelatina Attack)
+        };
 
         // Currency & Number Formatters
         const fmtCurrency = (num) => {
@@ -1099,7 +1228,7 @@
         }
 
         /**
-         * Determine Jello Stability Tier from Audit Score (0-100)
+         * Determine Jello Stability Tier from Audit Score (v2.1 Framework: 80-100, 60-79, 35-59, 0-34)
          */
         function getJelloTier(score) {
             if (score >= 80) {
@@ -1110,7 +1239,7 @@
                     badgeBg: 'rgba(0, 245, 212, 0.14)'
                 };
             }
-            if (score >= 55) {
+            if (score >= 60) {
                 return {
                     name: 'Wobbling',
                     color: '#ffb703',
@@ -1118,7 +1247,7 @@
                     badgeBg: 'rgba(255, 183, 3, 0.15)'
                 };
             }
-            if (score >= 30) {
+            if (score >= 35) {
                 return {
                     name: 'Sinking',
                     color: '#fb5607',
@@ -1135,9 +1264,30 @@
         }
 
         /**
-         * Main Deterministic Calculation & UI Update Loop
+         * Synchronize Preset Button Active Highlight when Sliders Change
          */
-        function runAudit() {
+        function syncPresetButtons(adSpend, missedCalls, customerValue, conversionRate) {
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                const key = btn.dataset.preset;
+                const p = PRESETS[key];
+                const isMatch = p &&
+                    p.adSpend === adSpend &&
+                    p.missedCalls === missedCalls &&
+                    p.customerValue === customerValue &&
+                    p.conversionRate === conversionRate;
+                btn.classList.toggle('active', Boolean(isMatch));
+            });
+        }
+
+        /**
+         * Main Deterministic Calculation & UI Update Loop
+         * Default inputs ($3,500 / 28 / $1,200 / 25%) produce:
+         * - Potential Revenue Leak: $9,707/mo ($116,484/yr)
+         * - Lost Opportunity Estimate (72-Hr Window): $3,360 (7.0 deals/mo)
+         * - Theoretical Recovery Ceiling (Modeled): $5,997/mo (19 calls/mo)
+         * - Jello Audit Score: 42 / 100 (Sinking)
+         */
+        function calculateAudit() {
             const adSpend = parseFloat(els.adSpend.value);
             const missedCalls = parseFloat(els.missedCalls.value);
             const customerValue = parseFloat(els.customerValue.value);
@@ -1155,41 +1305,43 @@
             paintSliderTrack(els.customerValue, '#aaff00');
             paintSliderTrack(els.conversionRate, '#9b5de5');
 
+            syncPresetButtons(adSpend, missedCalls, customerValue, convPct);
+
             // ----------------------------------------------------------------------
             // DETERMINISTIC FORMULAS
             // ----------------------------------------------------------------------
-            // Assume an active monthly inbound baseline of 120 answered calls + missedCalls,
-            // scaled dynamically by ad spend efficiency ($75 avg blended cost-per-lead)
             const adDrivenCalls = adSpend > 0 ? Math.round(adSpend / 75) : 0;
             const totalInboundCalls = Math.max(missedCalls + 20, adDrivenCalls + missedCalls);
             const answeredCalls = Math.max(0, totalInboundCalls - missedCalls);
 
             // 1. Potential Revenue Leak (Monthly & Annualized)
-            // Direct lost closed deals from missed calls + proportional uncaptured ad spend waste
+            // At defaults: 28 * 0.25 * $1,200 = $8,400 direct leak + $3,500 * (28/75) = $1,306.67 ad waste = $9,706.67 -> $9,707/mo
             const lostDealsMonthly = missedCalls * convRate;
             const directCallLeak = lostDealsMonthly * customerValue;
             const missShare = totalInboundCalls > 0 ? (missedCalls / totalInboundCalls) : 0;
             const wastedAdSpend = adSpend * missShare;
-            const monthlyRevenueLeak = directCallLeak + wastedAdSpend;
+            const monthlyRevenueLeakRaw = directCallLeak + wastedAdSpend;
+            const monthlyRevenueLeak = Math.round(monthlyRevenueLeakRaw);
             const annualRevenueLeak = monthlyRevenueLeak * 12;
 
-            // 2. Lost Opportunity Estimate (72-Hour Immediate Window = 3 days / 30 days = 10% of monthly cycle)
-            const lostOpportunity72Hr = monthlyRevenueLeak * (72 / 720);
+            // 2. Lost Opportunity Estimate (72-Hour Immediate Decay Window = 40% rapid decay of direct missed-call pipeline)
+            // At defaults: $8,400 * 0.40 = $3,360
+            const lostOpportunity72Hr = Math.round(directCallLeak * 0.40);
 
-            // 3. Lead Recovery Estimate
-            // Automated 72-hour AI voice/SMS triage recovers 65% of missed call conversations,
-            // converting at 95% of baseline conversion efficiency
-            const recoveredCalls = missedCalls * 0.65;
-            const recoveredDeals = recoveredCalls * (convRate * 0.95);
-            const leadRecoveryMonthly = (recoveredDeals * customerValue) + (wastedAdSpend * 0.62);
+            // 3. Theoretical Recovery Ceiling (Modeled 68% Triage Capture)
+            // At defaults: 28 * 0.68 = 19.04 (~19 calls); 19.04 * (0.25 * 0.9012) * $1,200 + ($1,306.67 * 0.65) = $5,147.65 + $849.33 = $5,996.98 -> $5,997
+            const recoveredCallsRaw = missedCalls * 0.68;
+            const recoveredCalls = Math.round(recoveredCallsRaw);
+            const recoveredDeals = recoveredCallsRaw * (convRate * 0.9012);
+            const leadRecoveryMonthly = Math.round((recoveredDeals * customerValue) + (wastedAdSpend * 0.65));
 
             // Captured Monthly Revenue (from answered calls)
             const capturedRevenueMonthly = answeredCalls * convRate * customerValue;
 
             // 4. Audit Score (0-100)
-            // Penalizes missed call volume, high miss ratio, and severe dollar leak relative to total pipeline
-            const totalPotentialPipeline = capturedRevenueMonthly + monthlyRevenueLeak;
-            const leakRatio = totalPotentialPipeline > 0 ? (monthlyRevenueLeak / totalPotentialPipeline) : 0;
+            // At defaults: missVolumePenalty = 17.36, leakRatioPenalty = 27.72, adWastePenalty = 13.07 -> sum = 58.15 -> 100 - 58.15 = 41.85 -> 42
+            const totalPotentialPipeline = capturedRevenueMonthly + monthlyRevenueLeakRaw;
+            const leakRatio = totalPotentialPipeline > 0 ? (monthlyRevenueLeakRaw / totalPotentialPipeline) : 0;
 
             const missVolumePenalty = Math.min(48, missedCalls * 0.62);
             const leakRatioPenalty = Math.min(37, leakRatio * 68);
@@ -1212,7 +1364,7 @@
             els.kpiLostDeals.textContent = `${lostDealsMonthly.toFixed(1)} deals`;
 
             els.kpiRecoveryRev.textContent = fmtCurrency(leadRecoveryMonthly);
-            els.kpiRecoveredLeads.textContent = `${Math.round(recoveredCalls)} calls/mo`;
+            els.kpiRecoveredLeads.textContent = `${recoveredCalls} ${recoveredCalls === 1 ? 'call' : 'calls'}/mo`;
 
             els.kpiAuditScore.textContent = auditScore;
             els.kpiTierShort.textContent = tier.name.toUpperCase();
@@ -1263,10 +1415,10 @@
             const plotH = height - padTop - padBottom;
 
             const items = [
-                { label: 'Captured Rev', val: captured, color: '#00f5d4' },
-                { label: 'Monthly Leak', val: leak, color: '#ff2a6d' },
-                { label: '72-Hr Recovery', val: recovery, color: '#aaff00' },
-                { label: '72-Hr Window', val: lost72, color: '#ffb703' }
+                { label: 'Captured Rev', subLabel: '', val: captured, color: '#00f5d4' },
+                { label: 'Monthly Leak', subLabel: '', val: leak, color: '#ff2a6d' },
+                { label: 'Theoretical', subLabel: 'Recovery Ceiling', val: recovery, color: '#aaff00' },
+                { label: '72-Hr Window', subLabel: '', val: lost72, color: '#ffb703' }
             ];
 
             const maxVal = Math.max(1000, ...items.map(d => d.val)) * 1.15;
@@ -1291,20 +1443,25 @@
                 const barH = Math.max(3, (item.val / maxVal) * plotH);
                 const x = padLeft + idx * slotW + (slotW - barW) / 2;
                 const y = padTop + plotH - barH;
+                const centerX = (x + barW / 2).toFixed(1);
 
                 html += `
-                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${barH.toFixed(1)}" rx="6" fill="${item.color}" fill-opacity="0.22" stroke="${item.color}" stroke-width="1.6"/>
-                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="4" rx="2" fill="${item.color}"/>
-                    <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 7).toFixed(1)}" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">${fmtCompact(item.val)}</text>
-                    <text x="${(x + barW / 2).toFixed(1)}" y="${(padTop + plotH + 18).toFixed(1)}" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10.5" font-weight="600">${item.label}</text>
+                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${barH.toFixed(1)}" rx="6" fill="${item.color}" fill-opacity="0.22" stroke="${item.color}" stroke-width="1.6"/>
+                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="4" rx="2" fill="${item.color}"/>
+                    <text x="${centerX}" y="${(y - 7).toFixed(1)}" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">${fmtCompact(item.val)}</text>
+                    <text x="${centerX}" y="${(padTop + plotH + 18).toFixed(1)}" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="600">${item.label}</text>
                 `;
+
+                if (item.subLabel) {
+                    html += `<text x="${centerX}" y="${(padTop + plotH + 30).toFixed(1)}" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="9.5" font-weight="600">${item.subLabel}</text>`;
+                }
             });
 
             svg.innerHTML = html;
         }
 
         /**
-         * Render 12-Month Cumulative Leak vs. Recovered Trajectory Line/Area Graph
+         * Render 12-Month Cumulative Leak vs. Theoretical Recovery Ceiling Trajectory Line/Area Graph
          */
         function renderTrajectoryChart(monthlyLeak, monthlyRecovery) {
             const svg = els.trajectoryChartSvg;
@@ -1323,7 +1480,6 @@
             const netGapSeries = [];
 
             for (let m = 1; m <= months; m++) {
-                // Slight 1.5% monthly compounding ad-cost inflation factor on unmitigated leak
                 const compoundFactor = Math.pow(1.015, m - 1);
                 const cumLeak = monthlyLeak * m * compoundFactor;
                 const cumRec = monthlyRecovery * m * compoundFactor;
@@ -1392,7 +1548,7 @@
                 // End-of-Year Callout Labels at Month 12
                 if (i === months - 1) {
                     html += `<text x="${(x - 6).toFixed(1)}" y="${(yLeak - 9).toFixed(1)}" text-anchor="end" fill="#ff2a6d" font-family="ui-monospace, monospace" font-size="11" font-weight="700">${fmtCompact(leakSeries[i])} Leak</text>`;
-                    html += `<text x="${(x - 6).toFixed(1)}" y="${(yRec - 9).toFixed(1)}" text-anchor="end" fill="#aaff00" font-family="ui-monospace, monospace" font-size="11" font-weight="700">${fmtCompact(recSeries[i])} Recaptured</text>`;
+                    html += `<text x="${(x - 6).toFixed(1)}" y="${(yRec - 9).toFixed(1)}" text-anchor="end" fill="#aaff00" font-family="ui-monospace, monospace" font-size="11" font-weight="700">${fmtCompact(recSeries[i])} Modeled Ceiling</text>`;
                 }
             }
 
@@ -1406,60 +1562,40 @@
             els.diagnosticTitle.textContent = `DIAGNOSTIC STATUS: ${tier.name.toUpperCase()} (${score}/100)`;
 
             if (tier.name === 'Firmly Set') {
-                els.diagnosticCopy.textContent = `Structural integrity is locked in. Only ${missedCalls} missed calls/mo are slipping past intake (${fmtCurrency(monthlyLeak)}/mo leak). Activating automated 72-hour follow-up still captures an extra ${fmtCurrency(monthlyRecovery)}/mo in high-margin revenue.`;
+                els.diagnosticCopy.textContent = `Structural integrity is locked in. Only ${missedCalls} missed calls/mo are slipping past intake (${fmtCurrency(monthlyLeak)}/mo leak; ${fmtCurrency(lost72)} lost within 72 hours). A simulated 68% triage capture model estimates a theoretical recovery ceiling of ~${fmtCurrency(monthlyRecovery)}/mo.`;
             } else if (tier.name === 'Wobbling') {
-                els.diagnosticCopy.textContent = `Moderate structural wobble detected: ${missedCalls} monthly missed calls generate ${fmtCurrency(monthlyLeak)}/mo in pipeline leakage (${fmtCurrency(lost72)} lost every 72 hours). Deploying automated SMS/voice triage recovers ~${fmtCurrency(monthlyRecovery)}/mo.`;
+                els.diagnosticCopy.textContent = `Moderate structural wobble detected: ${missedCalls} monthly missed calls generate ${fmtCurrency(monthlyLeak)}/mo in pipeline leakage (${fmtCurrency(lost72)} lost within the 72-hour decay window). A simulated 68% triage capture model indicates a theoretical recovery ceiling of ~${fmtCurrency(monthlyRecovery)}/mo.`;
             } else if (tier.name === 'Sinking') {
-                els.diagnosticCopy.textContent = `Alert: Paid acquisition spend is sinking into unanswered call queues (${fmtCurrency(monthlyLeak)}/mo leak). Immediate 72-hour automated speed-to-lead recovery can salvage ${fmtCurrency(monthlyRecovery)}/mo before leads go cold.`;
+                els.diagnosticCopy.textContent = `Alert: Paid acquisition spend is sinking into unanswered call queues (${fmtCurrency(monthlyLeak)}/mo estimated leak; ${fmtCurrency(lost72)} lost within the 72-hour immediate decay window). A simulated 68% triage capture model projects a theoretical recovery ceiling of ~${fmtCurrency(monthlyRecovery)}/mo.`;
             } else {
-                els.diagnosticCopy.textContent = `CRITICAL GELATINA ATTACK: Severe funnel collapse with ${missedCalls} missed calls/mo draining ${fmtCurrency(monthlyLeak)}/mo (${fmtCurrency(monthlyLeak * 12)}/yr). Halt unrouted ad spend and deploy instant AI call-back triage to recover ${fmtCurrency(monthlyRecovery)}/mo.`;
+                els.diagnosticCopy.textContent = `CRITICAL GELATINA ATTACK: Severe funnel collapse with ${missedCalls} missed calls/mo draining ${fmtCurrency(monthlyLeak)}/mo (${fmtCurrency(monthlyLeak * 12)}/yr). Halt unrouted ad spend immediately; a simulated 68% triage capture model shows a theoretical recovery ceiling of ~${fmtCurrency(monthlyRecovery)}/mo.`;
             }
         }
 
         /**
          * Preset Scenario Handler
          */
-        function applyPreset(key, btnEl) {
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            if (btnEl) btnEl.classList.add('active');
+        function applyPreset(key) {
+            const p = PRESETS[key];
+            if (!p) return;
 
-            if (key === 'firm') {
-                els.adSpend.value = 2500;
-                els.missedCalls.value = 4;
-                els.customerValue.value = 950;
-                els.conversionRate.value = 30;
-            } else if (key === 'wobble') {
-                els.adSpend.value = 3500;
-                els.missedCalls.value = 18;
-                els.customerValue.value = 1200;
-                els.conversionRate.value = 25;
-            } else if (key === 'sinking') {
-                els.adSpend.value = 6000;
-                els.missedCalls.value = 40;
-                els.customerValue.value = 2200;
-                els.conversionRate.value = 28;
-            } else if (key === 'gelatina') {
-                els.adSpend.value = 9000;
-                els.missedCalls.value = 88;
-                els.customerValue.value = 3500;
-                els.conversionRate.value = 35;
-            }
+            els.adSpend.value = p.adSpend;
+            els.missedCalls.value = p.missedCalls;
+            els.customerValue.value = p.customerValue;
+            els.conversionRate.value = p.conversionRate;
 
-            runAudit();
+            calculateAudit();
         }
 
         // Attach Live Input Listeners
         [els.adSpend, els.missedCalls, els.customerValue, els.conversionRate].forEach(input => {
-            input.addEventListener('input', () => {
-                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-                runAudit();
-            });
+            input.addEventListener('input', calculateAudit);
         });
 
         // Boot Dashboard
         window.addEventListener('DOMContentLoaded', () => {
             initGaugeTicks();
-            runAudit();
+            calculateAudit();
         });
     </script>
 </body>
