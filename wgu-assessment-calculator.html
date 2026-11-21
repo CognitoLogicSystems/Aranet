@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WGU Assessment Success Calculator</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter & JetBrains Mono Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#070b14',
+                            900: '#0f172a',
+                            850: '#152036',
+                            800: '#1e293b',
+                        },
+                        wgu: {
+                            navy: '#003057',
+                            blue: '#0072ce',
+                            gold: '#f2a900',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Range Slider Styling for Dark Theme Precision */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: #1e293b;
+            outline: none;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.85);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(0.98);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: 3px solid #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        /* Subtle dashboard grid background */
+        .bg-grid-pattern {
+            background-image: radial-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Smooth SVG Gauge Transitions */
+        .gauge-arc-transition {
+            transition: stroke-dashoffset 0.35s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.35s ease;
+        }
+
+        .gauge-needle-transition {
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: 200px 190px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-sky-500/30 selection:text-sky-200 bg-grid-pattern">
+
+    <!-- Top Navigation / Header -->
+    <header class="border-b border-slate-800/80 bg-slate-900/85 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+                <!-- Custom SVG Academic Analytics Emblem -->
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20 border border-sky-400/30 shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">WGU Assessment Success Calculator</h1>
+                        <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                            Self-Check Heuristic v2.4
+                        </span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-400">Personal Study Pacing &amp; Readiness Self-Check</p>
+                </div>
+            </div>
+
+            <!-- Preset Scenario Quick Buttons -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs text-slate-400 mr-1 hidden lg:inline">Scenarios:</span>
+                <button type="button" onclick="applyPreset('atRisk')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-750 text-rose-300 border border-rose-500/25 hover:border-rose-500/50 transition cursor-pointer">
+                    Cramming
+                </button>
+                <button type="button" onclick="applyPreset('borderline')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-750 text-amber-300 border border-amber-500/25 hover:border-amber-500/50 transition cursor-pointer">
+                    Approaching Cut
+                </button>
+                <button type="button" onclick="applyPreset('exemplary')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-750 text-emerald-300 border border-emerald-500/25 hover:border-emerald-500/50 transition cursor-pointer">
+                    Exemplary
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+            <!-- LEFT COLUMN: Interactive Input Sliders (5 cols on desktop) -->
+            <section class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+                <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-semibold text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                            </svg>
+                            Study &amp; Competency Inputs
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Adjust parameters to simulate assessment outcomes</p>
+                    </div>
+                    <button type="button" onclick="resetDefaults()" class="text-xs text-slate-400 hover:text-sky-400 underline underline-offset-4 transition cursor-pointer">
+                        Reset
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- 1. Hours Studied Per Day (0 - 12) -->
+                    <div class="group">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label for="studyHours" class="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                                Hours Studied Per Day
+                            </label>
+                            <div class="font-mono text-sm sm:text-base font-bold text-sky-400 bg-sky-950/60 border border-sky-500/20 px-2.5 py-0.5 rounded-lg">
+                                <span id="studyHoursVal">3.5</span> <span class="text-xs font-normal text-slate-400">hrs/day</span>
+                            </div>
+                        </div>
+                        <input type="range" id="studyHours" min="0" max="12" step="0.5" value="3.5" aria-label="Hours Studied Per Day">
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono mt-1.5">
+                            <span>0h</span>
+                            <span>4h</span>
+                            <span>8h</span>
+                            <span>12h</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. Competency Score (0 - 100%) -->
+                    <div class="group">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label for="competencyScore" class="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                                Competency Score
+                            </label>
+                            <div class="font-mono text-sm sm:text-base font-bold text-indigo-400 bg-indigo-950/60 border border-indigo-500/20 px-2.5 py-0.5 rounded-lg">
+                                <span id="competencyScoreVal">76</span><span class="text-xs font-normal text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="competencyScore" min="0" max="100" step="1" value="76" aria-label="Competency Score">
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono mt-1.5">
+                            <span>0% (Approaching)</span>
+                            <span>70% (Competent)</span>
+                            <span>100% (Exemplary)</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Practice Exam Score (0 - 100%) -->
+                    <div class="group">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label for="practiceExamScore" class="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                Practice Exam (PA) Score
+                            </label>
+                            <div class="font-mono text-sm sm:text-base font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg">
+                                <span id="practiceExamScoreVal">74</span><span class="text-xs font-normal text-slate-400">%</span>
+                            </div>
+                        </div>
+                        <input type="range" id="practiceExamScore" min="0" max="100" step="1" value="74" aria-label="Practice Exam Score">
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono mt-1.5">
+                            <span>0%</span>
+                            <span>50%</span>
+                            <span>75%</span>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Sleep Hours (0 - 10) -->
+                    <div class="group">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label for="sleepHours" class="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                                Sleep Hours
+                            </label>
+                            <div class="font-mono text-sm sm:text-base font-bold text-purple-400 bg-purple-950/60 border border-purple-500/20 px-2.5 py-0.5 rounded-lg">
+                                <span id="sleepHoursVal">7.5</span> <span class="text-xs font-normal text-slate-400">hrs/night</span>
+                            </div>
+                        </div>
+                        <input type="range" id="sleepHours" min="0" max="10" step="0.5" value="7.5" aria-label="Sleep Hours">
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono mt-1.5">
+                            <span>0h (Fatigue)</span>
+                            <span>5h</span>
+                            <span>7.5h (Optimal)</span>
+                            <span>10h</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. Days Remaining Until Assessment (0 - 10) -->
+                    <div class="group">
+                        <div class="flex justify-between items-baseline mb-2">
+                            <label for="daysRemaining" class="text-sm font-medium text-slate-200 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                Days Remaining Until Assessment
+                            </label>
+                            <div class="font-mono text-sm sm:text-base font-bold text-amber-400 bg-amber-950/60 border border-amber-500/20 px-2.5 py-0.5 rounded-lg">
+                                <span id="daysRemainingVal">5</span> <span id="daysUnitLabel" class="text-xs font-normal text-slate-400">days</span>
+                            </div>
+                        </div>
+                        <input type="range" id="daysRemaining" min="0" max="10" step="1" value="5" aria-label="Days Remaining Until Assessment">
+                        <div class="flex justify-between text-[11px] text-slate-500 font-mono mt-1.5">
+                            <span>0d (Exam Day)</span>
+                            <span>3d</span>
+                            <span>7d</span>
+                            <span>10d</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: Visualizations & Telemetry Outputs (7 cols on desktop) -->
+            <section class="lg:col-span-7 space-y-6">
+
+                <!-- Primary Gauge & Risk Card -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl backdrop-blur-sm relative overflow-hidden">
+                    <!-- Dynamic ambient glow behind gauge -->
+                    <div id="ambientGlow" class="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-48 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-500 bg-emerald-500"></div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800/80 relative z-10">
+                        <div>
+                            <h2 class="text-base sm:text-lg font-semibold text-white">Assessment Readiness Self-Check Gauge</h2>
+                            <p class="text-xs text-slate-400">Custom weighted self-check heuristic for personal study pacing (not an official WGU formula)</p>
+                        </div>
+
+                        <!-- Dynamic Risk Level Badge -->
+                        <div id="riskBadge" class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-300 bg-emerald-500/10 border-emerald-500/30 text-emerald-400 self-start sm:self-auto">
+                            <span id="riskDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span id="riskLabel">Low Risk</span>
+                        </div>
+                    </div>
+
+                    <!-- SVG Semicircular Gauge Visualization -->
+                    <div class="mt-4 flex flex-col items-center justify-center relative z-10">
+                        <div class="w-full max-w-[420px] aspect-[2/1.18] relative flex items-center justify-center">
+                            <svg id="readinessGaugeSvg" viewBox="0 0 400 235" class="w-full h-full overflow-visible" role="img" aria-label="Assessment Readiness Self-Check Gauge">
+                                <defs>
+                                    <!-- Subtle glow filter for active progress arc -->
+                                    <filter id="gaugeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="4" result="blur" />
+                                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                    </filter>
+                                </defs>
+
+                                <!-- Background Track Arc (Radius 145, Center 200,190) -->
+                                <path d="M 55 190 A 145 145 0 0 1 345 190"
+                                      fill="none"
+                                      stroke="#1e293b"
+                                      stroke-width="24"
+                                      stroke-linecap="round" />
+
+                                <!-- Zone Threshold Reference Band (Subtle outer ring showing 0-49 Red, 50-74 Yellow, 75-100 Green) -->
+                                <!-- 0 to 50% (180 deg to 90 deg) -->
+                                <path d="M 38 190 A 162 162 0 0 1 200 28"
+                                      fill="none"
+                                      stroke="#ef4444"
+                                      stroke-opacity="0.28"
+                                      stroke-width="4"
+                                      stroke-dasharray="4 3" />
+                                <!-- 50% to 75% (90 deg to 45 deg) -->
+                                <path d="M 200 28 A 162 162 0 0 1 314.55 75.45"
+                                      fill="none"
+                                      stroke="#eab308"
+                                      stroke-opacity="0.35"
+                                      stroke-width="4"
+                                      stroke-dasharray="4 3" />
+                                <!-- 75% to 100% (45 deg to 0 deg) -->
+                                <path d="M 314.55 75.45 A 162 162 0 0 1 362 190"
+                                      fill="none"
+                                      stroke="#10b981"
+                                      stroke-opacity="0.35"
+                                      stroke-width="4"
+                                      stroke-dasharray="4 3" />
+
+                                <!-- Active Readiness Fill Arc (Arc length = PI * 145 ≈ 455.53) -->
+                                <path id="gaugeProgressArc"
+                                      d="M 55 190 A 145 145 0 0 1 345 190"
+                                      fill="none"
+                                      stroke="#10b981"
+                                      stroke-width="24"
+                                      stroke-linecap="round"
+                                      stroke-dasharray="455.53"
+                                      stroke-dashoffset="100"
+                                      filter="url(#gaugeGlow)"
+                                      class="gauge-arc-transition" />
+
+                                <!-- Tick Marks & Scale Labels generated cleanly -->
+                                <g id="gaugeTicks" class="font-mono text-[11px] fill-slate-400"></g>
+
+                                <!-- Gauge Center Pivot & Needle -->
+                                <g id="gaugeNeedleGroup" class="gauge-needle-transition" style="transform: rotate(-90deg);">
+                                    <!-- Pointer Blade -->
+                                    <polygon points="200,56 195,190 205,190" fill="#f8fafc" opacity="0.92" />
+                                </g>
+                                <!-- Pivot Hub -->
+                                <circle cx="200" cy="190" r="14" fill="#0f172a" stroke="#475569" stroke-width="3" />
+                                <circle id="pivotCore" cx="200" cy="190" r="5" fill="#10b981" />
+
+                                <!-- Digital Score Readout Inside Semicircle -->
+                                <text x="200" y="148" text-anchor="middle" class="font-mono text-5xl font-extrabold fill-white tracking-tight" id="gaugeScoreText">77</text>
+                                <text x="200" y="168" text-anchor="middle" class="font-sans text-[11px] font-semibold uppercase tracking-widest fill-slate-400">Readiness Score / 100</text>
+                            </svg>
+                        </div>
+
+                        <!-- Legend Bar beneath Gauge -->
+                        <div class="grid grid-cols-3 gap-2 sm:gap-4 w-full max-w-md mt-1 pt-3 border-t border-slate-800/80 text-center">
+                            <div class="px-2 py-1.5 rounded-lg bg-rose-500/5 border border-rose-500/15">
+                                <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-rose-400">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span> High Risk
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-0.5">0 – 49 pts</div>
+                            </div>
+                            <div class="px-2 py-1.5 rounded-lg bg-amber-500/5 border border-amber-500/15">
+                                <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-amber-400">
+                                    <span class="w-2 h-2 rounded-full bg-amber-400"></span> Moderate
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-0.5">50 – 74 pts</div>
+                            </div>
+                            <div class="px-2 py-1.5 rounded-lg bg-emerald-500/5 border border-emerald-500/15">
+                                <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-emerald-400">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Low Risk
+                                </div>
+                                <div class="text-[11px] font-mono text-slate-400 mt-0.5">75 – 100 pts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Metric Cards Row (Outputs #1, #2, #4) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- KPI 1: Readiness Score -->
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium uppercase tracking-wider text-slate-400">Readiness Score</span>
+                            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-1.5">
+                            <span id="kpiReadiness" class="text-3xl font-extrabold font-mono text-white">77</span>
+                            <span class="text-sm font-mono text-slate-500">/ 100</span>
+                        </div>
+                        <p id="kpiReadinessSub" class="text-xs text-slate-400 mt-2">Above personal self-check target</p>
+                    </div>
+
+                    <!-- KPI 2: Risk Classification -->
+                    <div id="kpiRiskCard" class="bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col justify-between transition-colors duration-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium uppercase tracking-wider text-slate-400">Risk Level</span>
+                            <span id="kpiRiskIcon" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                        </div>
+                        <div class="mt-3">
+                            <span id="kpiRiskText" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-400">Low Risk</span>
+                        </div>
+                        <p id="kpiRiskSub" class="text-xs text-slate-400 mt-2">Strong pass probability</p>
+                    </div>
+
+                    <!-- KPI 3: Recommended Daily Study Hours -->
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-medium uppercase tracking-wider text-slate-400">Recommended Study</span>
+                            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="mt-3 flex items-baseline gap-1.5">
+                            <span id="kpiRecommendedHours" class="text-3xl font-extrabold font-mono text-amber-400">2.0</span>
+                            <span id="kpiRecommendedUnit" class="text-xs font-mono text-slate-400">hrs / day</span>
+                        </div>
+                        <p id="kpiRecommendedSub" class="text-xs text-slate-400 mt-2">Maintain momentum to exam</p>
+                    </div>
+                </div>
+
+                <!-- Factor Contribution & Actionable Guidance Panel -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <h3 class="text-sm sm:text-base font-semibold text-white">Readiness Factor Breakdown</h3>
+                        <span class="text-xs font-mono text-slate-400">Weighted Model Contribution</span>
+                    </div>
+
+                    <div class="space-y-3.5">
+                        <!-- Factor 1: Practice Exam (40% max) -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300 font-medium">Practice Exam Performance (40% weight)</span>
+                                <span class="font-mono text-emerald-400"><span id="factorPaPts">29.6</span> / 40.0 pts</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barPa" class="h-full bg-emerald-400 rounded-full transition-all duration-300" style="width: 74%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 2: Competency Score (35% max) -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300 font-medium">Course Competency Mastery (35% weight)</span>
+                                <span class="font-mono text-indigo-400"><span id="factorCompPts">26.6</span> / 35.0 pts</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barComp" class="h-full bg-indigo-400 rounded-full transition-all duration-300" style="width: 76%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 3: Study Effort & Time Horizon (15% max) -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300 font-medium">Cumulative Study Volume &amp; Pacing (15% weight)</span>
+                                <span class="font-mono text-sky-400"><span id="factorStudyPts">11.2</span> / 15.0 pts</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barStudy" class="h-full bg-sky-400 rounded-full transition-all duration-300" style="width: 74.7%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 4: Sleep & Cognitive Readiness (10% max) -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300 font-medium">Sleep &amp; Cognitive Recovery (10% weight)</span>
+                                <span class="font-mono text-purple-400"><span id="factorSleepPts">10.0</span> / 10.0 pts</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="barSleep" class="h-full bg-purple-400 rounded-full transition-all duration-300" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Advisor Insight Box -->
+                    <div id="advisorBox" class="mt-5 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-start gap-3">
+                        <div class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 shrink-0 mt-0.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-300">Study Strategy Recommendation</h4>
+                            <p id="advisorMessage" class="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
+                                Your current trajectory places you comfortably in the Low Risk zone. Focus on reviewing missed Pre-Assessment coaching report items and maintain 7–8 hours of sleep.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // DOM Element References
+        const inputs = {
+            studyHours: document.getElementById('studyHours'),
+            competencyScore: document.getElementById('competencyScore'),
+            practiceExamScore: document.getElementById('practiceExamScore'),
+            sleepHours: document.getElementById('sleepHours'),
+            daysRemaining: document.getElementById('daysRemaining')
+        };
+
+        const readouts = {
+            studyHoursVal: document.getElementById('studyHoursVal'),
+            competencyScoreVal: document.getElementById('competencyScoreVal'),
+            practiceExamScoreVal: document.getElementById('practiceExamScoreVal'),
+            sleepHoursVal: document.getElementById('sleepHoursVal'),
+            daysRemainingVal: document.getElementById('daysRemainingVal'),
+            daysUnitLabel: document.getElementById('daysUnitLabel')
+        };
+
+        // Gauge Constants
+        const ARC_RADIUS = 145;
+        const ARC_LENGTH = Math.PI * ARC_RADIUS; // ~455.53
+
+        /**
+         * Build precision tick marks along the semicircular SVG gauge
+         */
+        function initGaugeTicks() {
+            const ticksGroup = document.getElementById('gaugeTicks');
+            const cx = 200;
+            const cy = 190;
+            const innerR = 123;
+            const outerR = 130;
+            const labelR = 108;
+
+            for (let score = 0; score <= 100; score += 10) {
+                // Map 0..100 to angle PI..0 (left to right)
+                const angleRad = Math.PI * (1 - score / 100);
+                const cos = Math.cos(angleRad);
+                const sin = Math.sin(angleRad);
+
+                const x1 = cx + innerR * cos;
+                const y1 = cy - innerR * sin;
+                const x2 = cx + outerR * cos;
+                const y2 = cy - outerR * sin;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1.toFixed(1));
+                line.setAttribute('y1', y1.toFixed(1));
+                line.setAttribute('x2', x2.toFixed(1));
+                line.setAttribute('y2', y2.toFixed(1));
+                line.setAttribute('stroke', score % 50 === 0 ? '#94a3b8' : '#475569');
+                line.setAttribute('stroke-width', score % 50 === 0 ? '2' : '1.25');
+                ticksGroup.appendChild(line);
+
+                // Add numeric labels every 25 points
+                if (score % 25 === 0) {
+                    const lx = cx + labelR * cos;
+                    const ly = cy - labelR * sin + 4;
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', lx.toFixed(1));
+                    text.setAttribute('y', ly.toFixed(1));
+                    text.setAttribute('text-anchor', 'middle');
+                    text.textContent = score;
+                    ticksGroup.appendChild(text);
+                }
+            }
+        }
+
+        /**
+         * Update slider track gradient fill so active left portion is highlighted
+         */
+        function updateSliderTrackFill(slider, colorHex) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const val = parseFloat(slider.value);
+            const pct = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(to right, ${colorHex} 0%, ${colorHex} ${pct}%, #1e293b ${pct}%, #1e293b 100%)`;
+        }
+
+        /**
+         * Core Calculation Engine
+         * Computes Readiness Score (0-100), Risk Tier, Factor Points, and Recommended Study Hours
+         */
+        function calculateMetrics() {
+            const studyHours = parseFloat(inputs.studyHours.value);
+            const competency = parseFloat(inputs.competencyScore.value);
+            const practiceExam = parseFloat(inputs.practiceExamScore.value);
+            const sleep = parseFloat(inputs.sleepHours.value);
+            const days = parseInt(inputs.daysRemaining.value, 10);
+
+            // Update slider value readouts
+            readouts.studyHoursVal.textContent = studyHours.toFixed(1);
+            readouts.competencyScoreVal.textContent = competency;
+            readouts.practiceExamScoreVal.textContent = practiceExam;
+            readouts.sleepHoursVal.textContent = sleep.toFixed(1);
+            readouts.daysRemainingVal.textContent = days;
+            readouts.daysUnitLabel.textContent = days === 1 ? 'day' : 'days';
+
+            // Update slider track fill colors
+            updateSliderTrackFill(inputs.studyHours, '#38bdf8');
+            updateSliderTrackFill(inputs.competencyScore, '#818cf8');
+            updateSliderTrackFill(inputs.practiceExamScore, '#34d399');
+            updateSliderTrackFill(inputs.sleepHours, '#c084fc');
+            updateSliderTrackFill(inputs.daysRemaining, '#fbbf24');
+
+            // 1. Practice Exam Weight (max 40 pts)
+            const paPoints = (practiceExam / 100) * 40;
+
+            // 2. Competency Score Weight (max 35 pts)
+            const compPoints = (competency / 100) * 35;
+
+            // 3. Study Effort & Time Horizon Weight (max 15 pts)
+            // Diminishing returns past ~6 hours/day to reflect cognitive saturation,
+            // combined with days remaining to actually absorb material.
+            const effectiveDailyStudy = Math.min(studyHours, 8) + Math.max(0, studyHours - 8) * 0.25;
+            const effectiveHorizonDays = days === 0 ? 0.5 : days;
+            const totalPlannedStudy = effectiveDailyStudy * effectiveHorizonDays;
+            // Target cumulative prep volume ~24 effective hours for full 15 points, plus credit for strong daily habit
+            const volumeRatio = Math.min(1, totalPlannedStudy / 24);
+            const habitRatio = Math.min(1, effectiveDailyStudy / 4.5);
+            const studyPoints = (volumeRatio * 0.65 + habitRatio * 0.35) * 15;
+
+            // 4. Sleep & Cognitive Recovery Weight (max 10 pts)
+            // Optimal window is 7.0 to 9.0 hours. Severe penalty below 5 hours; mild taper above 9.5 hours.
+            let sleepEfficiency = 0;
+            if (sleep >= 7 && sleep <= 9) {
+                sleepEfficiency = 1.0;
+            } else if (sleep < 7) {
+                // Smooth quadratic curve from 0h (0.15) up to 7h (1.0)
+                sleepEfficiency = 0.15 + 0.85 * Math.pow(sleep / 7, 1.35);
+            } else {
+                // Slight oversleep grogginess factor above 9h
+                sleepEfficiency = Math.max(0.82, 1.0 - (sleep - 9) * 0.12);
+            }
+            const sleepPoints = sleepEfficiency * 10;
+
+            // Total Readiness Score clamped [0, 100]
+            const rawScore = paPoints + compPoints + studyPoints + sleepPoints;
+            const readinessScore = Math.round(Math.max(0, Math.min(100, rawScore)));
+
+            // Determine Risk Level (Green >= 75, Yellow 50-74, Red < 50)
+            let riskState = {
+                level: 'Low Risk',
+                sub: 'Strong pass probability',
+                colorHex: '#10b981', // Emerald 500
+                textClass: 'text-emerald-400',
+                badgeClass: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
+                dotClass: 'bg-emerald-400',
+                cardBorder: 'border-emerald-500/30',
+                glowClass: 'bg-emerald-500'
+            };
+
+            if (readinessScore < 50) {
+                riskState = {
+                    level: 'High Risk',
+                    sub: 'Rescheduling or intensive review advised',
+                    colorHex: '#ef4444', // Rose/Red 500
+                    textClass: 'text-rose-400',
+                    badgeClass: 'bg-rose-500/10 border-rose-500/30 text-rose-400',
+                    dotClass: 'bg-rose-400',
+                    cardBorder: 'border-rose-500/35',
+                    glowClass: 'bg-rose-500'
+                };
+            } else if (readinessScore < 75) {
+                riskState = {
+                    level: 'Moderate Risk',
+                    sub: 'Targeted coaching report review needed',
+                    colorHex: '#eab308', // Amber/Yellow 500
+                    textClass: 'text-amber-400',
+                    badgeClass: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+                    dotClass: 'bg-amber-400',
+                    cardBorder: 'border-amber-500/35',
+                    glowClass: 'bg-amber-500'
+                };
+            }
+
+            // 4. Calculate Recommended Daily Study Hours
+            // Target safe readiness benchmark = 80
+            const targetReadiness = 80;
+            const scoreGap = Math.max(0, targetReadiness - readinessScore);
+            let recHoursDisplay = '';
+            let recUnitDisplay = 'hrs / day';
+            let recSubDisplay = '';
+
+            if (days === 0) {
+                recHoursDisplay = '1.0';
+                recUnitDisplay = 'hr cap';
+                recSubDisplay = 'Exam day: light formula/flashcard review & rest';
+            } else if (scoreGap === 0) {
+                // Already at or above 80 readiness; recommend maintenance pacing
+                const maintenance = Math.max(1.0, Math.min(2.5, 1.5 + (100 - readinessScore) * 0.04));
+                recHoursDisplay = (Math.round(maintenance * 2) / 2).toFixed(1);
+                recSubDisplay = 'Maintenance pace to lock in retention';
+            } else {
+                // Estimate study hours needed to bridge the readiness gap over remaining days
+                // Roughly 1.15 total study hours per readiness point gap, plus baseline 1.5h/day
+                const totalNeededHours = scoreGap * 1.15;
+                const rawDaily = (totalNeededHours / days) + 1.5;
+                const cappedDaily = Math.min(10.0, Math.max(1.5, Math.round(rawDaily * 2) / 2));
+                recHoursDisplay = cappedDaily.toFixed(1);
+
+                if (rawDaily > 8.5) {
+                    recSubDisplay = 'Heavy workload — consider extending exam date';
+                } else {
+                    recSubDisplay = `To reach 80+ readiness in ${days} ${days === 1 ? 'day' : 'days'}`;
+                }
+            }
+
+            // Update Gauge SVG
+            const progressArc = document.getElementById('gaugeProgressArc');
+            const offset = ARC_LENGTH * (1 - readinessScore / 100);
+            progressArc.style.strokeDashoffset = offset.toFixed(2);
+            progressArc.style.stroke = riskState.colorHex;
+
+            // Rotate Needle (-90 deg at 0, 0 deg at 50, +90 deg at 100)
+            const needleDeg = -90 + (readinessScore / 100) * 180;
+            document.getElementById('gaugeNeedleGroup').style.transform = `rotate(${needleDeg.toFixed(1)}deg)`;
+            document.getElementById('pivotCore').setAttribute('fill', riskState.colorHex);
+            document.getElementById('gaugeScoreText').textContent = readinessScore;
+
+            // Update Ambient Glow & Top Risk Badge
+            const ambientGlow = document.getElementById('ambientGlow');
+            ambientGlow.className = `absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-48 rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-500 ${riskState.glowClass}`;
+
+            const riskBadge = document.getElementById('riskBadge');
+            riskBadge.className = `inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border text-xs sm:text-sm font-semibold transition-all duration-300 self-start sm:self-auto ${riskState.badgeClass}`;
+            document.getElementById('riskDot').className = `w-2.5 h-2.5 rounded-full animate-pulse ${riskState.dotClass}`;
+            document.getElementById('riskLabel').textContent = riskState.level;
+
+            // Update KPI Cards
+            document.getElementById('kpiReadiness').textContent = readinessScore;
+            document.getElementById('kpiReadinessSub').textContent = readinessScore >= 75
+                ? 'Above personal self-check target'
+                : readinessScore >= 50
+                    ? 'Approaching personal target threshold'
+                    : 'Below recommended self-check threshold';
+
+            const kpiRiskCard = document.getElementById('kpiRiskCard');
+            kpiRiskCard.className = `bg-slate-900/90 border ${riskState.cardBorder} rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col justify-between transition-colors duration-300`;
+            document.getElementById('kpiRiskIcon').className = `w-2.5 h-2.5 rounded-full ${riskState.dotClass}`;
+            const kpiRiskText = document.getElementById('kpiRiskText');
+            kpiRiskText.textContent = riskState.level;
+            kpiRiskText.className = `text-2xl sm:text-3xl font-extrabold tracking-tight ${riskState.textClass}`;
+            document.getElementById('kpiRiskSub').textContent = riskState.sub;
+
+            document.getElementById('kpiRecommendedHours').textContent = recHoursDisplay;
+            document.getElementById('kpiRecommendedUnit').textContent = recUnitDisplay;
+            document.getElementById('kpiRecommendedSub').textContent = recSubDisplay;
+
+            // Update Breakdown Bars
+            document.getElementById('factorPaPts').textContent = paPoints.toFixed(1);
+            document.getElementById('barPa').style.width = `${(paPoints / 40) * 100}%`;
+
+            document.getElementById('factorCompPts').textContent = compPoints.toFixed(1);
+            document.getElementById('barComp').style.width = `${(compPoints / 35) * 100}%`;
+
+            document.getElementById('factorStudyPts').textContent = studyPoints.toFixed(1);
+            document.getElementById('barStudy').style.width = `${(studyPoints / 15) * 100}%`;
+
+            document.getElementById('factorSleepPts').textContent = sleepPoints.toFixed(1);
+            document.getElementById('barSleep').style.width = `${(sleepPoints / 10) * 100}%`;
+
+            // Update Tailored Study Advisor Message
+            updateAdvisorInsight({ readinessScore, practiceExam, competency, sleep, studyHours, days });
+        }
+
+        /**
+         * Generate context-aware study guidance based on weakest telemetry input
+         */
+        function updateAdvisorInsight({ readinessScore, practiceExam, competency, sleep, studyHours, days }) {
+            const msgEl = document.getElementById('advisorMessage');
+
+            if (sleep < 6) {
+                msgEl.textContent = `Sleep deficit detected (${sleep.toFixed(1)} hrs/night). Cognitive recall drops sharply under fatigue—prioritizing 7.5+ hours of sleep before your OA can boost recall accuracy immediately.`;
+                return;
+            }
+
+            if (readinessScore < 50) {
+                if (days <= 2) {
+                    msgEl.textContent = `High Risk with only ${days} ${days === 1 ? 'day' : 'days'} left. Contact your Course Instructor to review weak sections on your Pre-Assessment Coaching Report and consider pushing your exam date back 4–5 days.`;
+                } else {
+                    msgEl.textContent = `Focus on high-weight competency units first. Complete targeted practice quizzes until both Competency and Practice Exam scores exceed 72% before attempting the OA.`;
+                }
+                return;
+            }
+
+            if (readinessScore < 75) {
+                if (practiceExam < competency - 8) {
+                    msgEl.textContent = `Your course competency (${competency}%) outpaces your Practice Exam (${practiceExam}%). Practice test-taking pacing and dissect every missed PA question to close the gap.`;
+                } else if (studyHours < 2 && days > 0) {
+                    msgEl.textContent = `You are approaching the competency threshold. Increasing daily focused study sessions to ${document.getElementById('kpiRecommendedHours').textContent} hrs/day over the next ${days} ${days === 1 ? 'day' : 'days'} will push you into the Low Risk zone.`;
+                } else {
+                    msgEl.textContent = `Moderate Risk: Review "Approaching Competence" sections on your WGU Coaching Report and retake the Pre-Assessment once you have reinforced those topics.`;
+                }
+                return;
+            }
+
+            if (days === 0) {
+                msgEl.textContent = `You are in a strong Low Risk position (${readinessScore}/100) for Exam Day. Avoid heavy cramming today—do a light 30–45 minute review of key concepts and enter your proctored session rested.`;
+            } else {
+                msgEl.textContent = `Strong readiness (${readinessScore}/100). Maintain ${document.getElementById('kpiRecommendedHours').textContent} hrs/day of active recall and spaced repetition, and keep sleep steady at ${sleep.toFixed(1)} hrs/night through exam day.`;
+            }
+        }
+
+        /**
+         * Quick Scenario Presets for Rapid Exploration
+         */
+        function applyPreset(type) {
+            if (type === 'atRisk') {
+                inputs.studyHours.value = 1.5;
+                inputs.competencyScore.value = 48;
+                inputs.practiceExamScore.value = 44;
+                inputs.sleepHours.value = 5.0;
+                inputs.daysRemaining.value = 2;
+            } else if (type === 'borderline') {
+                inputs.studyHours.value = 2.5;
+                inputs.competencyScore.value = 66;
+                inputs.practiceExamScore.value = 62;
+                inputs.sleepHours.value = 6.5;
+                inputs.daysRemaining.value = 4;
+            } else if (type === 'exemplary') {
+                inputs.studyHours.value = 4.5;
+                inputs.competencyScore.value = 90;
+                inputs.practiceExamScore.value = 88;
+                inputs.sleepHours.value = 8.0;
+                inputs.daysRemaining.value = 3;
+            }
+            calculateMetrics();
+        }
+
+        function resetDefaults() {
+            inputs.studyHours.value = 3.5;
+            inputs.competencyScore.value = 76;
+            inputs.practiceExamScore.value = 74;
+            inputs.sleepHours.value = 7.5;
+            inputs.daysRemaining.value = 5;
+            calculateMetrics();
+        }
+
+        // Attach Real-Time Event Listeners
+        Object.values(inputs).forEach(slider => {
+            slider.addEventListener('input', calculateMetrics);
+        });
+
+        // Initialize Gauge Ticks and Initial Calculation on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            initGaugeTicks();
+            calculateMetrics();
+        });
+    </script>
+</body>
+</html>

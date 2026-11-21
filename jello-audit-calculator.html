@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>72-Hour Jello Audit | Kitchen Algorithms Labs</title>
+    <style>
+        /* ==========================================================================
+           DESIGN TOKENS & DARK FUTURISTIC JELLO MUNDO THEME
+           Zero external dependencies - pure CSS variables, Grid, and Flexbox
+           ========================================================================== */
+        :root {
+            --bg-obsidian: #06080f;
+            --bg-surface: rgba(13, 18, 32, 0.78);
+            --bg-surface-solid: #0d1220;
+            --bg-elevated: rgba(21, 29, 50, 0.85);
+            --border-subtle: rgba(148, 163, 184, 0.14);
+            --border-glow: rgba(0, 245, 212, 0.35);
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --neon-cyan: #00f5d4;
+            --neon-lime: #aaff00;
+            --neon-violet: #9b5de5;
+            --neon-amber: #ffb703;
+            --neon-orange: #fb5607;
+            --neon-crimson: #ff2a6d;
+
+            --tier-color: #00f5d4;
+            --tier-glow: rgba(0, 245, 212, 0.25);
+
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-obsidian);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(155, 93, 229, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(0, 245, 212, 0.1) 0%, transparent 42%),
+                linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+        }
+
+        .tabular {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ==========================================================================
+           HEADER & CYBER-TERMINAL TOP BAR
+           ========================================================================== */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(6, 8, 15, 0.86);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .topbar-inner {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0.9rem 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .jello-emblem {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(0, 245, 212, 0.18), rgba(155, 93, 229, 0.25));
+            border: 1px solid rgba(0, 245, 212, 0.45);
+            box-shadow: 0 0 18px rgba(0, 245, 212, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .brand-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .brand-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #ffffff 0%, var(--neon-cyan) 60%, var(--neon-lime) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .system-tag {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.18rem 0.5rem;
+            border-radius: 6px;
+            background: rgba(155, 93, 229, 0.16);
+            border: 1px solid rgba(155, 93, 229, 0.4);
+            color: #d8b4fe;
+        }
+
+        .brand-sub {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.02em;
+        }
+
+        .preset-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+        }
+
+        .preset-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-right: 0.2rem;
+        }
+
+        .preset-btn {
+            background: rgba(15, 23, 42, 0.85);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.4rem 0.72rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            color: #ffffff;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .preset-btn.active {
+            background: rgba(0, 245, 212, 0.14);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        /* ==========================================================================
+           MAIN LAYOUT GRID
+           ========================================================================== */
+        .container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 1.4rem 1.25rem 3rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.35rem;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: 410px 1fr;
+                align-items: start;
+            }
+        }
+
+        /* Glassmorphic Panel */
+        .panel {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.35rem;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 16px;
+            right: 16px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.35), transparent);
+            pointer-events: none;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding-bottom: 0.95rem;
+            margin-bottom: 1.15rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .panel-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-subtitle {
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin-top: 0.18rem;
+        }
+
+        /* ==========================================================================
+           INPUT SLIDERS & CONTROLS
+           ========================================================================== */
+        .control-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.35rem;
+        }
+
+        .control-group {
+            background: rgba(10, 14, 26, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 0.95rem 1rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .control-group:hover {
+            border-color: rgba(0, 245, 212, 0.28);
+        }
+
+        .control-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.65rem;
+            gap: 0.5rem;
+        }
+
+        .control-label {
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .dot-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .value-pill {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.22rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(6, 8, 15, 0.9);
+            border: 1px solid rgba(0, 245, 212, 0.28);
+            color: var(--neon-cyan);
+            box-shadow: inset 0 0 8px rgba(0, 245, 212, 0.08);
+        }
+
+        /* Custom Range Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 7px;
+            border-radius: 999px;
+            background: #1e293b;
+            outline: none;
+            cursor: pointer;
+            margin: 0.35rem 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #06080f;
+            border: 2.5px solid var(--neon-cyan);
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.65);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 18px rgba(0, 245, 212, 0.95);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #06080f;
+            border: 2.5px solid var(--neon-cyan);
+            box-shadow: 0 0 12px rgba(0, 245, 212, 0.65);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .range-bounds {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Diagnostic Formula Summary Card inside Left Column */
+        .telemetry-note {
+            margin-top: 1.25rem;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
+            background: rgba(155, 93, 229, 0.08);
+            border: 1px solid rgba(155, 93, 229, 0.25);
+            font-size: 0.76rem;
+            color: var(--text-secondary);
+        }
+
+        .telemetry-note strong {
+            color: #e9d5ff;
+            display: block;
+            margin-bottom: 0.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ==========================================================================
+           RIGHT COLUMN: OUTPUTS, GAUGE & VISUALIZATIONS
+           ========================================================================== */
+        .output-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1.35rem;
+        }
+
+        /* 4 KPI Telemetry Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 0.95rem;
+        }
+
+        @media (min-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 1.05rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.25s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.4rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .kpi-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+        }
+
+        .kpi-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.12rem 0.42rem;
+            border-radius: 5px;
+            font-weight: 700;
+        }
+
+        .kpi-value {
+            font-family: var(--font-mono);
+            font-variant-numeric: tabular-nums;
+            font-size: 1.65rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-bottom: 0.35rem;
+        }
+
+        .kpi-sub {
+            font-size: 0.74rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.35rem;
+        }
+
+        /* Gauge + Bar Chart Split Row */
+        .viz-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.35rem;
+        }
+
+        @media (min-width: 820px) {
+            .viz-row {
+                grid-template-columns: 1fr 1.15fr;
+            }
+        }
+
+        /* Jello Stability Tier Pill */
+        .stability-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border: 1px solid var(--tier-color);
+            color: var(--tier-color);
+            background: rgba(6, 8, 15, 0.75);
+            box-shadow: 0 0 18px var(--tier-glow);
+            transition: all 0.3s ease;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--tier-color);
+            box-shadow: 0 0 10px var(--tier-color);
+            animation: pulseAnim 1.8s infinite ease-in-out;
+        }
+
+        @keyframes pulseAnim {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.6; }
+        }
+
+        /* SVG Gauge Styling */
+        .gauge-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0 0.5rem;
+        }
+
+        .gauge-svg {
+            width: 100%;
+            max-width: 340px;
+            height: auto;
+            overflow: visible;
+        }
+
+        .gauge-arc {
+            transition: stroke-dashoffset 0.35s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.3s ease;
+        }
+
+        .gauge-needle {
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            transform-origin: 180px 168px;
+        }
+
+        .tier-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.45rem;
+            width: 100%;
+            margin-top: 0.75rem;
+        }
+
+        .tier-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.36rem 0.6rem;
+            border-radius: 8px;
+            background: rgba(10, 14, 26, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            font-size: 0.7rem;
+        }
+
+        .tier-chip.active-tier {
+            border-color: var(--tier-color);
+            box-shadow: inset 0 0 10px var(--tier-glow);
+        }
+
+        .tier-chip-left {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 600;
+        }
+
+        /* Chart Containers */
+        .chart-box {
+            width: 100%;
+            position: relative;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            overflow: visible;
+        }
+
+        .legend-inline {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.73rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .legend-swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        /* Diagnostic Action Banner */
+        .diagnostic-banner {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            padding: 1rem 1.15rem;
+            border-radius: 12px;
+            background: rgba(10, 14, 26, 0.85);
+            border-left: 4px solid var(--tier-color);
+            border-top: 1px solid var(--border-subtle);
+            border-right: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .diagnostic-title {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--tier-color);
+        }
+
+        .diagnostic-copy {
+            font-size: 0.83rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 1.25rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(148, 163, 184, 0.08);
+            padding-top: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Cyber-Terminal Header -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand-cluster">
+                <div class="jello-emblem" aria-hidden="true">
+                    <!-- Custom Translucent Jello Cube SVG Icon -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L21 7V17L12 22L3 17V7L12 2Z" stroke="#00f5d4" stroke-width="1.8" fill="rgba(0, 245, 212, 0.14)"/>
+                        <path d="M12 22V12M12 12L21 7M12 12L3 7" stroke="#aaff00" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="2.2" fill="#00f5d4"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title-row">
+                        <h1 class="brand-title">72-Hour Jello Audit</h1>
+                        <span class="system-tag">Jello Mundo v3.2</span>
+                    </div>
+                    <p class="brand-sub">Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC &mdash; Revenue Leak &amp; Lead Recovery Telemetry</p>
+                </div>
+            </div>
+
+            <!-- Preset Scenario Buttons -->
+            <div class="preset-bar" role="group" aria-label="Audit Preset Scenarios">
+                <span class="preset-label">Presets:</span>
+                <button type="button" class="preset-btn" data-preset="firm" onclick="applyPreset('firm', this)">Firmly Set</button>
+                <button type="button" class="preset-btn active" data-preset="wobble" onclick="applyPreset('wobble', this)">Wobbling</button>
+                <button type="button" class="preset-btn" data-preset="sinking" onclick="applyPreset('sinking', this)">Sinking</button>
+                <button type="button" class="preset-btn" data-preset="gelatina" onclick="applyPreset('gelatina', this)">Gelatina Attack</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="container">
+
+        <!-- LEFT PANEL: Interactive Range Sliders -->
+        <aside class="panel" aria-label="Funnel Telemetry Inputs">
+            <div class="panel-header">
+                <div>
+                    <h2 class="panel-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f5d4" stroke-width="2.2">
+                            <line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line>
+                            <line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line>
+                            <line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line>
+                            <line x1="17" y1="16" x2="23" y2="16"></line>
+                        </svg>
+                        Funnel Telemetry Inputs
+                    </h2>
+                    <p class="panel-subtitle">Calibrate live acquisition &amp; call-handling parameters</p>
+                </div>
+            </div>
+
+            <div class="control-stack">
+                <!-- 1. Monthly Ad Spend ($0 - $10,000) -->
+                <div class="control-group">
+                    <div class="control-top">
+                        <label for="adSpend" class="control-label">
+                            <span class="dot-indicator" style="background:#00f5d4; box-shadow:0 0 8px #00f5d4;"></span>
+                            Monthly Ad Spend
+                        </label>
+                        <span id="adSpendVal" class="value-pill">$3,500</span>
+                    </div>
+                    <input type="range" id="adSpend" min="0" max="10000" step="100" value="3500">
+                    <div class="range-bounds">
+                        <span>$0</span>
+                        <span>$5,000</span>
+                        <span>$10,000</span>
+                    </div>
+                </div>
+
+                <!-- 2. Monthly Missed Calls (0 - 100) -->
+                <div class="control-group">
+                    <div class="control-top">
+                        <label for="missedCalls" class="control-label">
+                            <span class="dot-indicator" style="background:#ff2a6d; box-shadow:0 0 8px #ff2a6d;"></span>
+                            Monthly Missed Calls
+                        </label>
+                        <span id="missedCallsVal" class="value-pill" style="color:#ff2a6d; border-color:rgba(255,42,109,0.35);">18 calls</span>
+                    </div>
+                    <input type="range" id="missedCalls" min="0" max="100" step="1" value="18">
+                    <div class="range-bounds">
+                        <span>0 calls</span>
+                        <span>50 calls</span>
+                        <span>100 calls</span>
+                    </div>
+                </div>
+
+                <!-- 3. Average Customer Value ($10 - $10,000) -->
+                <div class="control-group">
+                    <div class="control-top">
+                        <label for="customerValue" class="control-label">
+                            <span class="dot-indicator" style="background:#aaff00; box-shadow:0 0 8px #aaff00;"></span>
+                            Average Customer Value
+                        </label>
+                        <span id="customerValueVal" class="value-pill" style="color:#aaff00; border-color:rgba(170,255,0,0.35);">$1,200</span>
+                    </div>
+                    <input type="range" id="customerValue" min="10" max="10000" step="10" value="1200">
+                    <div class="range-bounds">
+                        <span>$10</span>
+                        <span>$5,000</span>
+                        <span>$10,000</span>
+                    </div>
+                </div>
+
+                <!-- 4. Conversion Rate (1% - 100%) -->
+                <div class="control-group">
+                    <div class="control-top">
+                        <label for="conversionRate" class="control-label">
+                            <span class="dot-indicator" style="background:#9b5de5; box-shadow:0 0 8px #9b5de5;"></span>
+                            Lead Conversion Rate
+                        </label>
+                        <span id="conversionRateVal" class="value-pill" style="color:#d8b4fe; border-color:rgba(155,93,229,0.4);">25%</span>
+                    </div>
+                    <input type="range" id="conversionRate" min="1" max="100" step="1" value="25">
+                    <div class="range-bounds">
+                        <span>1%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="telemetry-note">
+                <strong>72-Hour Response Decay Protocol</strong>
+                Leads contacted within 5 minutes convert up to 8x higher. Unanswered inbound calls decay past the 72-hour Jello threshold, turning paid acquisition spend into unrecovered pipeline leakage.
+            </div>
+        </aside>
+
+        <!-- RIGHT PANEL: KPI Telemetry, Radial Gauge, and Graphs -->
+        <section class="output-stack" aria-label="Audit Outputs and Visualizations">
+
+            <!-- 4 Real-Time KPI Output Cards -->
+            <div class="kpi-grid">
+                <!-- 1. Potential Revenue Leak -->
+                <article class="kpi-card" style="border-color: rgba(255, 42, 109, 0.3);">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Potential Revenue Leak</span>
+                        <span class="kpi-badge" style="background:rgba(255,42,109,0.15); color:#ff2a6d;">MONTHLY</span>
+                    </div>
+                    <div id="kpiLeakMonthly" class="kpi-value" style="color:#ff2a6d;">$6,369</div>
+                    <div class="kpi-sub">
+                        <span>Annualized:</span>
+                        <strong id="kpiLeakAnnual" class="tabular" style="color:#fda4af;">$76,431/yr</strong>
+                    </div>
+                </article>
+
+                <!-- 2. Lost Opportunity Estimate (72-Hour Window) -->
+                <article class="kpi-card" style="border-color: rgba(255, 183, 3, 0.3);">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Lost Opportunity Est.</span>
+                        <span class="kpi-badge" style="background:rgba(255,183,3,0.15); color:#ffb703;">72-HR WINDOW</span>
+                    </div>
+                    <div id="kpiLost72Hr" class="kpi-value" style="color:#ffb703;">$637</div>
+                    <div class="kpi-sub">
+                        <span>Lost Deals/Mo:</span>
+                        <strong id="kpiLostDeals" class="tabular" style="color:#fde68a;">4.5 deals</strong>
+                    </div>
+                </article>
+
+                <!-- 3. Lead Recovery Estimate -->
+                <article class="kpi-card" style="border-color: rgba(170, 255, 0, 0.3);">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Lead Recovery Est.</span>
+                        <span class="kpi-badge" style="background:rgba(170,255,0,0.14); color:#aaff00;">AI TRIAGE</span>
+                    </div>
+                    <div id="kpiRecoveryRev" class="kpi-value" style="color:#aaff00;">$3,935</div>
+                    <div class="kpi-sub">
+                        <span>Recovered Leads:</span>
+                        <strong id="kpiRecoveredLeads" class="tabular" style="color:#d9f99d;">12 calls/mo</strong>
+                    </div>
+                </article>
+
+                <!-- 4. Audit Score -->
+                <article id="kpiScoreCard" class="kpi-card" style="border-color: var(--tier-color);">
+                    <div class="kpi-header">
+                        <span class="kpi-label">Jello Audit Score</span>
+                        <span id="kpiTierShort" class="kpi-badge" style="background:rgba(255,183,3,0.15); color:#ffb703;">WOBBLING</span>
+                    </div>
+                    <div class="kpi-value" style="color:var(--tier-color);">
+                        <span id="kpiAuditScore">58</span><span style="font-size:0.95rem; color:var(--text-muted); font-weight:600;">/100</span>
+                    </div>
+                    <div class="kpi-sub">
+                        <span>Leak Ratio:</span>
+                        <strong id="kpiLeakRatio" class="tabular" style="color:var(--text-primary);">31.1%</strong>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Middle Row: Futuristic Audit Score Gauge + Revenue Impact Comparison Chart -->
+            <div class="viz-row">
+
+                <!-- SVG Semicircular Audit Score Gauge -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Jello Stability Gauge</h2>
+                            <p class="panel-subtitle">Structural funnel integrity index</p>
+                        </div>
+                        <div class="stability-pill" id="stabilityBadge">
+                            <span class="pulse-dot"></span>
+                            <span id="stabilityTierText">Wobbling</span>
+                        </div>
+                    </div>
+
+                    <div class="gauge-wrap">
+                        <svg class="gauge-svg" viewBox="0 0 360 205" role="img" aria-label="Audit Score Radial Gauge">
+                            <defs>
+                                <filter id="neonGlow" x="-25%" y="-25%" width="150%" height="150%">
+                                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                                    <feMerge>
+                                        <feMergeNode in="blur"/>
+                                        <feMergeNode in="SourceGraphic"/>
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Subtle Outer Tier Zone Segments (Radius 142, Center 180,168) -->
+                            <!-- Gelatina Attack (0-29): 180deg to 127.8deg -->
+                            <path d="M 38 168 A 142 142 0 0 1 93.0 55.8" fill="none" stroke="#ff2a6d" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Sinking (30-54): 127.8deg to 82.8deg -->
+                            <path d="M 93.0 55.8 A 142 142 0 0 1 197.8 27.1" fill="none" stroke="#fb5607" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Wobbling (55-79): 82.8deg to 37.8deg -->
+                            <path d="M 197.8 27.1 A 142 142 0 0 1 292.2 81.0" fill="none" stroke="#ffb703" stroke-width="4" stroke-opacity="0.45" stroke-dasharray="4 3"/>
+                            <!-- Firmly Set (80-100): 37.8deg to 0deg -->
+                            <path d="M 292.2 81.0 A 142 142 0 0 1 322 168" fill="none" stroke="#00f5d4" stroke-width="4" stroke-opacity="0.55" stroke-dasharray="4 3"/>
+
+                            <!-- Base Track Arc (Radius 126, Arc Length = PI * 126 = 395.84) -->
+                            <path d="M 54 168 A 126 126 0 0 1 306 168" fill="none" stroke="#162038" stroke-width="22" stroke-linecap="round"/>
+
+                            <!-- Active Score Arc -->
+                            <path id="gaugeArc"
+                                  class="gauge-arc"
+                                  d="M 54 168 A 126 126 0 0 1 306 168"
+                                  fill="none"
+                                  stroke="#ffb703"
+                                  stroke-width="22"
+                                  stroke-linecap="round"
+                                  stroke-dasharray="395.84"
+                                  stroke-dashoffset="166.25"
+                                  filter="url(#neonGlow)"/>
+
+                            <!-- Precision Tick Marks Container -->
+                            <g id="gaugeTicks"></g>
+
+                            <!-- Needle Pointer -->
+                            <g id="gaugeNeedle" class="gauge-needle" style="transform: rotate(14.4deg);">
+                                <polygon points="180,50 175.5,168 184.5,168" fill="#ffffff" opacity="0.95"/>
+                            </g>
+                            <circle cx="180" cy="168" r="13" fill="#06080f" stroke="#334155" stroke-width="2.5"/>
+                            <circle id="gaugePivotDot" cx="180" cy="168" r="5" fill="#ffb703"/>
+
+                            <!-- Center Numeric Readout -->
+                            <text id="gaugeScoreLabel" x="180" y="132" text-anchor="middle" fill="#ffffff" font-family="ui-monospace, monospace" font-size="40" font-weight="800">58</text>
+                            <text x="180" y="150" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10" font-weight="700" letter-spacing="1.8">STABILITY INDEX</text>
+                        </svg>
+
+                        <!-- 4-Tier Jello Stability Matrix -->
+                        <div class="tier-legend" id="tierLegend">
+                            <div class="tier-chip" data-tier="Firmly Set">
+                                <span class="tier-chip-left"><span class="dot-indicator" style="background:#00f5d4;"></span>Firmly Set</span>
+                                <span class="tabular" style="color:#00f5d4;">80–100</span>
+                            </div>
+                            <div class="tier-chip active-tier" data-tier="Wobbling">
+                                <span class="tier-chip-left"><span class="dot-indicator" style="background:#ffb703;"></span>Wobbling</span>
+                                <span class="tabular" style="color:#ffb703;">55–79</span>
+                            </div>
+                            <div class="tier-chip" data-tier="Sinking">
+                                <span class="tier-chip-left"><span class="dot-indicator" style="background:#fb5607;"></span>Sinking</span>
+                                <span class="tabular" style="color:#fb5607;">30–54</span>
+                            </div>
+                            <div class="tier-chip" data-tier="Gelatina Attack">
+                                <span class="tier-chip-left"><span class="dot-indicator" style="background:#ff2a6d;"></span>Gelatina Attack</span>
+                                <span class="tabular" style="color:#ff2a6d;">0–29</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Impact & Recovery Comparison Bar Chart (Pure SVG) -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Monthly Pipeline &amp; Recovery Breakdown</h2>
+                            <p class="panel-subtitle">Captured revenue vs. leakage vs. 72-hour AI recovery</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <svg id="barChartSvg" class="chart-svg" viewBox="0 0 460 255" role="img" aria-label="Monthly Revenue Impact and Recovery Bar Chart"></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Row: 12-Month Cumulative Revenue Leak vs. Recovered Trajectory Line/Area Graph -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2 class="panel-title">12-Month Compounding Leak vs. Recovery Trajectory</h2>
+                        <p class="panel-subtitle">Cumulative unmitigated revenue drain compared against automated 72-hour follow-up recovery</p>
+                    </div>
+                    <div class="legend-inline">
+                        <span class="legend-item">
+                            <span class="legend-swatch" style="background:#ff2a6d;"></span>
+                            Cumulative Revenue Leak
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-swatch" style="background:#aaff00;"></span>
+                            Cumulative Recovered Revenue
+                        </span>
+                        <span class="legend-item">
+                            <span class="legend-swatch" style="background:#00f5d4;"></span>
+                            Net Unrecovered Gap
+                        </span>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <svg id="trajectoryChartSvg" class="chart-svg" viewBox="0 0 860 250" role="img" aria-label="12-Month Cumulative Revenue Leak vs Recovered Trajectory Chart"></svg>
+                </div>
+            </div>
+
+            <!-- Actionable Diagnostic Protocol Banner -->
+            <div class="diagnostic-banner" id="diagnosticBanner">
+                <div class="diagnostic-title" id="diagnosticTitle">DIAGNOSTIC STATUS: WOBBLING (58/100)</div>
+                <p class="diagnostic-copy" id="diagnosticCopy">
+                    Moderate structural wobble detected: 18 monthly missed calls generate $6,369/mo in pipeline leakage ($637 lost every 72 hours). Deploying automated SMS/voice triage recovers ~$3,935/mo.
+                </p>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="footer">
+        <span>&copy; 2026 Kitchen Algorithms Labs &bull; CognitoLogic Systems LLC. All telemetry deterministic.</span>
+        <span class="tabular">PROTOCOL: 72HR-JELLO-AUDIT // STATUS: ONLINE</span>
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           DETERMINISTIC AUDIT ENGINE & SVG VISUALIZATION RENDERER
+           Zero external dependencies. Real-time reactive updates.
+           ========================================================================== */
+
+        const els = {
+            adSpend: document.getElementById('adSpend'),
+            missedCalls: document.getElementById('missedCalls'),
+            customerValue: document.getElementById('customerValue'),
+            conversionRate: document.getElementById('conversionRate'),
+
+            adSpendVal: document.getElementById('adSpendVal'),
+            missedCallsVal: document.getElementById('missedCallsVal'),
+            customerValueVal: document.getElementById('customerValueVal'),
+            conversionRateVal: document.getElementById('conversionRateVal'),
+
+            kpiLeakMonthly: document.getElementById('kpiLeakMonthly'),
+            kpiLeakAnnual: document.getElementById('kpiLeakAnnual'),
+            kpiLost72Hr: document.getElementById('kpiLost72Hr'),
+            kpiLostDeals: document.getElementById('kpiLostDeals'),
+            kpiRecoveryRev: document.getElementById('kpiRecoveryRev'),
+            kpiRecoveredLeads: document.getElementById('kpiRecoveredLeads'),
+            kpiAuditScore: document.getElementById('kpiAuditScore'),
+            kpiTierShort: document.getElementById('kpiTierShort'),
+            kpiLeakRatio: document.getElementById('kpiLeakRatio'),
+            kpiScoreCard: document.getElementById('kpiScoreCard'),
+
+            stabilityTierText: document.getElementById('stabilityTierText'),
+            gaugeArc: document.getElementById('gaugeArc'),
+            gaugeNeedle: document.getElementById('gaugeNeedle'),
+            gaugePivotDot: document.getElementById('gaugePivotDot'),
+            gaugeScoreLabel: document.getElementById('gaugeScoreLabel'),
+
+            barChartSvg: document.getElementById('barChartSvg'),
+            trajectoryChartSvg: document.getElementById('trajectoryChartSvg'),
+
+            diagnosticTitle: document.getElementById('diagnosticTitle'),
+            diagnosticCopy: document.getElementById('diagnosticCopy')
+        };
+
+        const GAUGE_RADIUS = 126;
+        const GAUGE_ARC_LEN = Math.PI * GAUGE_RADIUS; // ~395.84
+
+        // Currency & Number Formatters
+        const fmtCurrency = (num) => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0
+            }).format(Math.round(num));
+        };
+
+        const fmtCompact = (num) => {
+            if (num >= 1000000) return '$' + (num / 1000000).toFixed(2) + 'M';
+            if (num >= 1000) return '$' + (num / 1000).toFixed(1) + 'k';
+            return '$' + Math.round(num);
+        };
+
+        /**
+         * Draw radial tick marks & 0/25/50/75/100 labels on the Audit Score Gauge
+         */
+        function initGaugeTicks() {
+            const ticksGroup = document.getElementById('gaugeTicks');
+            const cx = 180;
+            const cy = 168;
+            const rInner = 106;
+            const rOuter = 113;
+            const rText = 94;
+
+            for (let s = 0; s <= 100; s += 10) {
+                const rad = Math.PI * (1 - s / 100);
+                const cos = Math.cos(rad);
+                const sin = Math.sin(rad);
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', (cx + rInner * cos).toFixed(1));
+                line.setAttribute('y1', (cy - rInner * sin).toFixed(1));
+                line.setAttribute('x2', (cx + rOuter * cos).toFixed(1));
+                line.setAttribute('y2', (cy - rOuter * sin).toFixed(1));
+                line.setAttribute('stroke', s % 50 === 0 ? '#94a3b8' : '#475569');
+                line.setAttribute('stroke-width', s % 50 === 0 ? '2' : '1.2');
+                ticksGroup.appendChild(line);
+
+                if (s % 25 === 0) {
+                    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    txt.setAttribute('x', (cx + rText * cos).toFixed(1));
+                    txt.setAttribute('y', (cy - rText * sin + 3.5).toFixed(1));
+                    txt.setAttribute('text-anchor', 'middle');
+                    txt.setAttribute('fill', '#64748b');
+                    txt.setAttribute('font-family', 'ui-monospace, monospace');
+                    txt.setAttribute('font-size', '10');
+                    txt.setAttribute('font-weight', '600');
+                    txt.textContent = s;
+                    ticksGroup.appendChild(txt);
+                }
+            }
+        }
+
+        /**
+         * Highlight active slider track fill
+         */
+        function paintSliderTrack(slider, color) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const val = parseFloat(slider.value);
+            const pct = ((val - min) / (max - min)) * 100;
+            slider.style.background = `linear-gradient(90deg, ${color} 0%, ${color} ${pct}%, #1e293b ${pct}%, #1e293b 100%)`;
+        }
+
+        /**
+         * Determine Jello Stability Tier from Audit Score (0-100)
+         */
+        function getJelloTier(score) {
+            if (score >= 80) {
+                return {
+                    name: 'Firmly Set',
+                    color: '#00f5d4',
+                    glow: 'rgba(0, 245, 212, 0.28)',
+                    badgeBg: 'rgba(0, 245, 212, 0.14)'
+                };
+            }
+            if (score >= 55) {
+                return {
+                    name: 'Wobbling',
+                    color: '#ffb703',
+                    glow: 'rgba(255, 183, 3, 0.28)',
+                    badgeBg: 'rgba(255, 183, 3, 0.15)'
+                };
+            }
+            if (score >= 30) {
+                return {
+                    name: 'Sinking',
+                    color: '#fb5607',
+                    glow: 'rgba(251, 86, 7, 0.30)',
+                    badgeBg: 'rgba(251, 86, 7, 0.16)'
+                };
+            }
+            return {
+                name: 'Gelatina Attack',
+                color: '#ff2a6d',
+                glow: 'rgba(255, 42, 109, 0.34)',
+                badgeBg: 'rgba(255, 42, 109, 0.16)'
+            };
+        }
+
+        /**
+         * Main Deterministic Calculation & UI Update Loop
+         */
+        function runAudit() {
+            const adSpend = parseFloat(els.adSpend.value);
+            const missedCalls = parseFloat(els.missedCalls.value);
+            const customerValue = parseFloat(els.customerValue.value);
+            const convPct = parseFloat(els.conversionRate.value);
+            const convRate = convPct / 100;
+
+            // Update Input Readouts & Slider Tracks
+            els.adSpendVal.textContent = fmtCurrency(adSpend);
+            els.missedCallsVal.textContent = `${missedCalls} ${missedCalls === 1 ? 'call' : 'calls'}`;
+            els.customerValueVal.textContent = fmtCurrency(customerValue);
+            els.conversionRateVal.textContent = `${convPct}%`;
+
+            paintSliderTrack(els.adSpend, '#00f5d4');
+            paintSliderTrack(els.missedCalls, '#ff2a6d');
+            paintSliderTrack(els.customerValue, '#aaff00');
+            paintSliderTrack(els.conversionRate, '#9b5de5');
+
+            // ----------------------------------------------------------------------
+            // DETERMINISTIC FORMULAS
+            // ----------------------------------------------------------------------
+            // Assume an active monthly inbound baseline of 120 answered calls + missedCalls,
+            // scaled dynamically by ad spend efficiency ($75 avg blended cost-per-lead)
+            const adDrivenCalls = adSpend > 0 ? Math.round(adSpend / 75) : 0;
+            const totalInboundCalls = Math.max(missedCalls + 20, adDrivenCalls + missedCalls);
+            const answeredCalls = Math.max(0, totalInboundCalls - missedCalls);
+
+            // 1. Potential Revenue Leak (Monthly & Annualized)
+            // Direct lost closed deals from missed calls + proportional uncaptured ad spend waste
+            const lostDealsMonthly = missedCalls * convRate;
+            const directCallLeak = lostDealsMonthly * customerValue;
+            const missShare = totalInboundCalls > 0 ? (missedCalls / totalInboundCalls) : 0;
+            const wastedAdSpend = adSpend * missShare;
+            const monthlyRevenueLeak = directCallLeak + wastedAdSpend;
+            const annualRevenueLeak = monthlyRevenueLeak * 12;
+
+            // 2. Lost Opportunity Estimate (72-Hour Immediate Window = 3 days / 30 days = 10% of monthly cycle)
+            const lostOpportunity72Hr = monthlyRevenueLeak * (72 / 720);
+
+            // 3. Lead Recovery Estimate
+            // Automated 72-hour AI voice/SMS triage recovers 65% of missed call conversations,
+            // converting at 95% of baseline conversion efficiency
+            const recoveredCalls = missedCalls * 0.65;
+            const recoveredDeals = recoveredCalls * (convRate * 0.95);
+            const leadRecoveryMonthly = (recoveredDeals * customerValue) + (wastedAdSpend * 0.62);
+
+            // Captured Monthly Revenue (from answered calls)
+            const capturedRevenueMonthly = answeredCalls * convRate * customerValue;
+
+            // 4. Audit Score (0-100)
+            // Penalizes missed call volume, high miss ratio, and severe dollar leak relative to total pipeline
+            const totalPotentialPipeline = capturedRevenueMonthly + monthlyRevenueLeak;
+            const leakRatio = totalPotentialPipeline > 0 ? (monthlyRevenueLeak / totalPotentialPipeline) : 0;
+
+            const missVolumePenalty = Math.min(48, missedCalls * 0.62);
+            const leakRatioPenalty = Math.min(37, leakRatio * 68);
+            const adWastePenalty = adSpend > 0 ? Math.min(15, (wastedAdSpend / adSpend) * 35) : 0;
+
+            const rawScore = 100 - missVolumePenalty - leakRatioPenalty - adWastePenalty;
+            const auditScore = Math.round(Math.max(0, Math.min(100, rawScore)));
+
+            const tier = getJelloTier(auditScore);
+
+            // Apply Theme CSS Variables Dynamically
+            document.documentElement.style.setProperty('--tier-color', tier.color);
+            document.documentElement.style.setProperty('--tier-glow', tier.glow);
+
+            // Update KPI Cards
+            els.kpiLeakMonthly.textContent = fmtCurrency(monthlyRevenueLeak);
+            els.kpiLeakAnnual.textContent = `${fmtCurrency(annualRevenueLeak)}/yr`;
+
+            els.kpiLost72Hr.textContent = fmtCurrency(lostOpportunity72Hr);
+            els.kpiLostDeals.textContent = `${lostDealsMonthly.toFixed(1)} deals`;
+
+            els.kpiRecoveryRev.textContent = fmtCurrency(leadRecoveryMonthly);
+            els.kpiRecoveredLeads.textContent = `${Math.round(recoveredCalls)} calls/mo`;
+
+            els.kpiAuditScore.textContent = auditScore;
+            els.kpiTierShort.textContent = tier.name.toUpperCase();
+            els.kpiTierShort.style.background = tier.badgeBg;
+            els.kpiTierShort.style.color = tier.color;
+            els.kpiLeakRatio.textContent = `${(leakRatio * 100).toFixed(1)}%`;
+
+            // Update Radial Gauge
+            els.stabilityTierText.textContent = tier.name;
+            const dashOffset = GAUGE_ARC_LEN * (1 - auditScore / 100);
+            els.gaugeArc.style.strokeDashoffset = dashOffset.toFixed(2);
+            els.gaugeArc.setAttribute('stroke', tier.color);
+
+            const needleAngle = -90 + (auditScore / 100) * 180;
+            els.gaugeNeedle.style.transform = `rotate(${needleAngle.toFixed(1)}deg)`;
+            els.gaugePivotDot.setAttribute('fill', tier.color);
+            els.gaugeScoreLabel.textContent = auditScore;
+
+            // Highlight Active Tier Chip
+            document.querySelectorAll('.tier-chip').forEach(chip => {
+                if (chip.dataset.tier === tier.name) {
+                    chip.classList.add('active-tier');
+                } else {
+                    chip.classList.remove('active-tier');
+                }
+            });
+
+            // Render Bar Chart & Trajectory Line/Area Chart
+            renderBarChart(capturedRevenueMonthly, monthlyRevenueLeak, leadRecoveryMonthly, lostOpportunity72Hr);
+            renderTrajectoryChart(monthlyRevenueLeak, leadRecoveryMonthly);
+
+            // Update Diagnostic Banner Copy
+            updateDiagnosticCopy(tier, auditScore, monthlyRevenueLeak, leadRecoveryMonthly, missedCalls, lostOpportunity72Hr);
+        }
+
+        /**
+         * Render Pure SVG Bar Comparison Chart
+         */
+        function renderBarChart(captured, leak, recovery, lost72) {
+            const svg = els.barChartSvg;
+            const width = 460;
+            const height = 255;
+            const padLeft = 58;
+            const padRight = 20;
+            const padTop = 26;
+            const padBottom = 46;
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
+
+            const items = [
+                { label: 'Captured Rev', val: captured, color: '#00f5d4' },
+                { label: 'Monthly Leak', val: leak, color: '#ff2a6d' },
+                { label: '72-Hr Recovery', val: recovery, color: '#aaff00' },
+                { label: '72-Hr Window', val: lost72, color: '#ffb703' }
+            ];
+
+            const maxVal = Math.max(1000, ...items.map(d => d.val)) * 1.15;
+
+            let html = '';
+
+            // Horizontal Gridlines (4 steps)
+            for (let i = 0; i <= 4; i++) {
+                const ratio = i / 4;
+                const y = padTop + plotH - ratio * plotH;
+                const tickVal = maxVal * ratio;
+
+                html += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${width - padRight}" y2="${y.toFixed(1)}" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>`;
+                html += `<text x="${padLeft - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10">${fmtCompact(tickVal)}</text>`;
+            }
+
+            // Bars
+            const slotW = plotW / items.length;
+            const barW = Math.min(54, slotW * 0.56);
+
+            items.forEach((item, idx) => {
+                const barH = Math.max(3, (item.val / maxVal) * plotH);
+                const x = padLeft + idx * slotW + (slotW - barW) / 2;
+                const y = padTop + plotH - barH;
+
+                html += `
+                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="${barH.toFixed(1)}" rx="6" fill="${item.color}" fill-opacity="0.22" stroke="${item.color}" stroke-width="1.6"/>
+                    <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW}" height="4" rx="2" fill="${item.color}"/>
+                    <text x="${(x + barW / 2).toFixed(1)}" y="${(y - 7).toFixed(1)}" text-anchor="middle" fill="#f8fafc" font-family="ui-monospace, monospace" font-size="10.5" font-weight="700">${fmtCompact(item.val)}</text>
+                    <text x="${(x + barW / 2).toFixed(1)}" y="${(padTop + plotH + 18).toFixed(1)}" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="10.5" font-weight="600">${item.label}</text>
+                `;
+            });
+
+            svg.innerHTML = html;
+        }
+
+        /**
+         * Render 12-Month Cumulative Leak vs. Recovered Trajectory Line/Area Graph
+         */
+        function renderTrajectoryChart(monthlyLeak, monthlyRecovery) {
+            const svg = els.trajectoryChartSvg;
+            const width = 860;
+            const height = 250;
+            const padLeft = 66;
+            const padRight = 28;
+            const padTop = 24;
+            const padBottom = 38;
+            const plotW = width - padLeft - padRight;
+            const plotH = height - padTop - padBottom;
+
+            const months = 12;
+            const leakSeries = [];
+            const recSeries = [];
+            const netGapSeries = [];
+
+            for (let m = 1; m <= months; m++) {
+                // Slight 1.5% monthly compounding ad-cost inflation factor on unmitigated leak
+                const compoundFactor = Math.pow(1.015, m - 1);
+                const cumLeak = monthlyLeak * m * compoundFactor;
+                const cumRec = monthlyRecovery * m * compoundFactor;
+                leakSeries.push(cumLeak);
+                recSeries.push(cumRec);
+                netGapSeries.push(Math.max(0, cumLeak - cumRec));
+            }
+
+            const maxVal = Math.max(2000, ...leakSeries) * 1.12;
+
+            let html = `
+                <defs>
+                    <linearGradient id="leakAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#ff2a6d" stop-opacity="0.32"/>
+                        <stop offset="100%" stop-color="#ff2a6d" stop-opacity="0.01"/>
+                    </linearGradient>
+                    <linearGradient id="recAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#aaff00" stop-opacity="0.28"/>
+                        <stop offset="100%" stop-color="#aaff00" stop-opacity="0.01"/>
+                    </linearGradient>
+                </defs>
+            `;
+
+            // Horizontal Y-Axis Gridlines
+            for (let i = 0; i <= 4; i++) {
+                const ratio = i / 4;
+                const y = padTop + plotH - ratio * plotH;
+                const val = maxVal * ratio;
+                html += `<line x1="${padLeft}" y1="${y.toFixed(1)}" x2="${width - padRight}" y2="${y.toFixed(1)}" stroke="rgba(148,163,184,0.12)" stroke-dasharray="3 3"/>`;
+                html += `<text x="${padLeft - 10}" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="#64748b" font-family="ui-monospace, monospace" font-size="10.5">${fmtCompact(val)}</text>`;
+            }
+
+            const getX = (idx) => padLeft + (idx / (months - 1)) * plotW;
+            const getY = (val) => padTop + plotH - (val / maxVal) * plotH;
+
+            // Build SVG Polyline & Area Paths
+            const leakPts = leakSeries.map((v, i) => `${getX(i).toFixed(1)},${getY(v).toFixed(1)}`);
+            const recPts = recSeries.map((v, i) => `${getX(i).toFixed(1)},${getY(v).toFixed(1)}`);
+            const gapPts = netGapSeries.map((v, i) => `${getX(i).toFixed(1)},${getY(v).toFixed(1)}`);
+
+            const baseLineY = (padTop + plotH).toFixed(1);
+            const firstX = getX(0).toFixed(1);
+            const lastX = getX(months - 1).toFixed(1);
+
+            const leakAreaPath = `M ${firstX},${baseLineY} L ${leakPts.join(' L ')} L ${lastX},${baseLineY} Z`;
+            const recAreaPath = `M ${firstX},${baseLineY} L ${recPts.join(' L ')} L ${lastX},${baseLineY} Z`;
+
+            html += `<path d="${leakAreaPath}" fill="url(#leakAreaGrad)"/>`;
+            html += `<path d="${recAreaPath}" fill="url(#recAreaGrad)"/>`;
+
+            // Lines
+            html += `<polyline points="${leakPts.join(' ')}" fill="none" stroke="#ff2a6d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+            html += `<polyline points="${recPts.join(' ')}" fill="none" stroke="#aaff00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`;
+            html += `<polyline points="${gapPts.join(' ')}" fill="none" stroke="#00f5d4" stroke-width="1.8" stroke-dasharray="5 4"/>`;
+
+            // Month Labels & Data Nodes
+            for (let i = 0; i < months; i++) {
+                const x = getX(i);
+                const yLeak = getY(leakSeries[i]);
+                const yRec = getY(recSeries[i]);
+
+                html += `<text x="${x.toFixed(1)}" y="${(padTop + plotH + 20).toFixed(1)}" text-anchor="middle" fill="#94a3b8" font-family="ui-monospace, monospace" font-size="10.5">M${i + 1}</text>`;
+                html += `<circle cx="${x.toFixed(1)}" cy="${yLeak.toFixed(1)}" r="3.2" fill="#06080f" stroke="#ff2a6d" stroke-width="2"/>`;
+                html += `<circle cx="${x.toFixed(1)}" cy="${yRec.toFixed(1)}" r="3.2" fill="#06080f" stroke="#aaff00" stroke-width="2"/>`;
+
+                // End-of-Year Callout Labels at Month 12
+                if (i === months - 1) {
+                    html += `<text x="${(x - 6).toFixed(1)}" y="${(yLeak - 9).toFixed(1)}" text-anchor="end" fill="#ff2a6d" font-family="ui-monospace, monospace" font-size="11" font-weight="700">${fmtCompact(leakSeries[i])} Leak</text>`;
+                    html += `<text x="${(x - 6).toFixed(1)}" y="${(yRec - 9).toFixed(1)}" text-anchor="end" fill="#aaff00" font-family="ui-monospace, monospace" font-size="11" font-weight="700">${fmtCompact(recSeries[i])} Recaptured</text>`;
+                }
+            }
+
+            svg.innerHTML = html;
+        }
+
+        /**
+         * Update Diagnostic Status Banner
+         */
+        function updateDiagnosticCopy(tier, score, monthlyLeak, monthlyRecovery, missedCalls, lost72) {
+            els.diagnosticTitle.textContent = `DIAGNOSTIC STATUS: ${tier.name.toUpperCase()} (${score}/100)`;
+
+            if (tier.name === 'Firmly Set') {
+                els.diagnosticCopy.textContent = `Structural integrity is locked in. Only ${missedCalls} missed calls/mo are slipping past intake (${fmtCurrency(monthlyLeak)}/mo leak). Activating automated 72-hour follow-up still captures an extra ${fmtCurrency(monthlyRecovery)}/mo in high-margin revenue.`;
+            } else if (tier.name === 'Wobbling') {
+                els.diagnosticCopy.textContent = `Moderate structural wobble detected: ${missedCalls} monthly missed calls generate ${fmtCurrency(monthlyLeak)}/mo in pipeline leakage (${fmtCurrency(lost72)} lost every 72 hours). Deploying automated SMS/voice triage recovers ~${fmtCurrency(monthlyRecovery)}/mo.`;
+            } else if (tier.name === 'Sinking') {
+                els.diagnosticCopy.textContent = `Alert: Paid acquisition spend is sinking into unanswered call queues (${fmtCurrency(monthlyLeak)}/mo leak). Immediate 72-hour automated speed-to-lead recovery can salvage ${fmtCurrency(monthlyRecovery)}/mo before leads go cold.`;
+            } else {
+                els.diagnosticCopy.textContent = `CRITICAL GELATINA ATTACK: Severe funnel collapse with ${missedCalls} missed calls/mo draining ${fmtCurrency(monthlyLeak)}/mo (${fmtCurrency(monthlyLeak * 12)}/yr). Halt unrouted ad spend and deploy instant AI call-back triage to recover ${fmtCurrency(monthlyRecovery)}/mo.`;
+            }
+        }
+
+        /**
+         * Preset Scenario Handler
+         */
+        function applyPreset(key, btnEl) {
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            if (key === 'firm') {
+                els.adSpend.value = 2500;
+                els.missedCalls.value = 4;
+                els.customerValue.value = 950;
+                els.conversionRate.value = 30;
+            } else if (key === 'wobble') {
+                els.adSpend.value = 3500;
+                els.missedCalls.value = 18;
+                els.customerValue.value = 1200;
+                els.conversionRate.value = 25;
+            } else if (key === 'sinking') {
+                els.adSpend.value = 6000;
+                els.missedCalls.value = 40;
+                els.customerValue.value = 2200;
+                els.conversionRate.value = 28;
+            } else if (key === 'gelatina') {
+                els.adSpend.value = 9000;
+                els.missedCalls.value = 88;
+                els.customerValue.value = 3500;
+                els.conversionRate.value = 35;
+            }
+
+            runAudit();
+        }
+
+        // Attach Live Input Listeners
+        [els.adSpend, els.missedCalls, els.customerValue, els.conversionRate].forEach(input => {
+            input.addEventListener('input', () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                runAudit();
+            });
+        });
+
+        // Boot Dashboard
+        window.addEventListener('DOMContentLoaded', () => {
+            initGaugeTicks();
+            runAudit();
+        });
+    </script>
+</body>
+</html>
