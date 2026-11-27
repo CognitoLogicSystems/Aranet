@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AraNet Front Door Check | Kitchen Algorithm Labs</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="/creative-ip/characters/lumen_ara_mascot.PNG" alt="Lumen Ara" class="lumen-face">
+    <div>
+      <span class="kicker">Kitchen Algorithm Labs // AraNet</span>
+      <h1>Front Door Check</h1>
+      <p class="lede">Lumen Ara reads your shop's front door in seconds. Private on-device first. Full cloud verdict after.</p>
+    </div>
+  </header>
+
+  <main>
+    <form id="frontDoorForm" class="form-card" autocomplete="off">
+      <label>Missed calls in the last 72 hours
+        <input name="missedCalls" type="text" placeholder="e.g. 14, or I don't check voicemail" required>
+      </label>
+      <label>Google Business listing status
+        <select name="listingStatus" required>
+          <option value="not claimed">Not claimed</option>
+          <option value="claimed, incomplete">Claimed, incomplete</option>
+          <option value="active, reviews flowing">Active, reviews flowing</option>
+          <option value="suspended or flagged">Suspended or flagged</option>
+        </select>
+      </label>
+      <label>Posted business hours
+        <input name="hours" type="text" placeholder="e.g. Mon-Fri 8-5, closed weekends" required>
+      </label>
+      <label>How does first contact happen today?
+        <textarea name="firstContact" rows="3" placeholder="Phone only? Text? Web form? Walk-ins?" required></textarea>
+      </label>
+      <button type="submit" id="runBtn">Run the check</button>
+    </form>
+
+    <section id="onDeviceBox" class="result-card on-device" hidden>
+      <div class="result-head">
+        <h2>Private first read</h2>
+        <span class="source-tag" id="onDeviceTag"></span>
+      </div>
+      <p id="onDeviceText"></p>
+    </section>
+
+    <section id="cloudBox" class="result-card cloud" hidden>
+      <div class="result-head">
+        <h2>Full verdict</h2>
+        <span class="source-tag" id="cloudTag"></span>
+      </div>
+      <p class="status-line" id="cloudStatus"></p>
+      <p class="step-line"><strong>Next step:</strong> <span id="cloudStep"></span></p>
+    </section>
+
+    <p id="errorBox" class="error" hidden></p>
+  </main>
+
+  <footer>
+    <p>Built ≠ Verified. Reality Gets the Vote. // CognitoLogic Systems LLC</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
