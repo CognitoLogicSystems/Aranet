@@ -1,13 +1,12 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { app } from "./firebase-app.js";
+import "./app-check.js";
 import {
   getAI,
   getGenerativeModel,
   GoogleAIBackend,
   InferenceMode
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-ai.js";
-import { firebaseConfig } from "./firebase-config.js";
 
-export const app = initializeApp(firebaseConfig);
 const ai = getAI(app, { backend: new GoogleAIBackend() });
 
 const FRONT_DOOR_SYSTEM = `You are Lumen Ara, the interface intelligence of Kitchen Algorithm Labs.

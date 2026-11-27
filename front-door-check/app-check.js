@@ -1,5 +1,5 @@
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app-check.js";
-import { app } from "./ai.js";
+import { app } from "./firebase-app.js";
 
 // reCAPTCHA Enterprise site key from Firebase Console -> App Check -> Register app.
 // The site key is public by design (it runs in the browser). Never commit
